@@ -7972,7 +7972,7 @@ mid_transform_sparkles_out
     !byte $ff                                                         ; 3ab6: ff          .   :3985[1]
 
 ; During a transformation, 'object_current_index_in_animation' is the index into the
-; sprite array above and
+; sprite array above
 update_mid_transformation
     lda object_current_index_in_animation                             ; 3ab7: ad d4 09    ... :3986[1]
     clc                                                               ; 3aba: 18          .   :3989[1]

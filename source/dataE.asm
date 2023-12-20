@@ -1,4 +1,6 @@
 ; Constants
+bird_max_global_x_position            = 116
+bird_min_global_x_position            = 30
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
@@ -12,8 +14,6 @@ copy_mode_random4                     = 4
 copy_mode_random64                    = 64
 copy_mode_random8                     = 8
 copy_mode_simple                      = 1
-duck_max_global_x_position            = 116
-duck_min_global_x_position            = 30
 exit_room_bottom                      = 2
 exit_room_left                        = 1
 exit_room_right                       = 4
@@ -26,6 +26,8 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_bird                         = 4
+objectid_bird_wings                   = 5
 objectid_egg                          = 3
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
@@ -33,15 +35,21 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_small_egg                    = 2
 opcode_jmp                            = 76
-small_egg_status_being_thrown         = 12
 small_egg_status_collected            = 255
-small_egg_status_falling              = 50
-small_egg_status_on_ground            = 1
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_ball                         = 59
+spriteid_bird_1                       = 200
+spriteid_bird_2                       = 201
+spriteid_bird_3                       = 202
+spriteid_bird_toolbar                 = 209
+spriteid_bird_transform_1             = 204
+spriteid_bird_transform_2             = 205
+spriteid_bird_wing_1                  = 206
+spriteid_bird_wing_2                  = 207
+spriteid_bird_wing_3                  = 208
 spriteid_brazier                      = 58
 spriteid_cache1                       = 214
 spriteid_cache2                       = 222
@@ -73,15 +81,6 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
-spriteid_duck_1                       = 200
-spriteid_duck_2                       = 201
-spriteid_duck_3                       = 202
-spriteid_duck_toolbar                 = 209
-spriteid_duck_transform_1             = 204
-spriteid_duck_transform_2             = 205
-spriteid_duck_wing_1                  = 206
-spriteid_duck_wing_2                  = 207
-spriteid_duck_wing_3                  = 208
 spriteid_egg                          = 210
 spriteid_egg_toolbar                  = 211
 spriteid_erase_player                 = 199
@@ -145,8 +144,6 @@ spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
-spriteid_todo                         = 252
-spriteid_todo2                        = 254
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -159,143 +156,138 @@ spriteid_wizard_transform2            = 57
 spriteid_wizard_using_object          = 53
 
 ; Memory locations
-sprite_id                                           = $16
-sprite_x_base_low                                   = $18
-sprite_x_base_high                                  = $19
-sprite_y_base_low                                   = $1a
-sprite_y_base_high                                  = $1b
-sprite_reflect_flag                                 = $1d
-l0023                                               = $23
-desired_room_index                                  = $30
-current_level                                       = $31
-temp_sprite_x_offset                                = $3a
-temp_sprite_y_offset                                = $3b
-width_in_cells                                      = $3c
-height_in_cells                                     = $3d
-value_to_write_to_collision_map                     = $3e
-source_sprite_memory_low                            = $40
-source_sprite_memory_high                           = $41
-copy_mode                                           = $42
-current_player_character                            = $48
-previous_room_index                                 = $50
-level_before_latest_level_and_room_initialisation   = $51
-player_held_object_spriteid                         = $52
-developer_mode_sideways_ram_is_set_up_flag          = $5b
-l0070                                               = $70
-object_left_low                                     = $70
-room_exit_direction                                 = $70
-object_left_high                                    = $71
-object_right_low                                    = $72
-object_right_high                                   = $73
-object_left_cell_x                                  = $78
-object_right_cell_x                                 = $79
-object_x_low                                        = $0950
-object_x_low_old                                    = $095b
-object_x_high                                       = $0966
-object_x_high_old                                   = $0971
-object_y_low                                        = $097c
-object_y_low_old                                    = $0987
-object_y_high                                       = $0992
-object_spriteid                                     = $09a8
-object_spriteid_old                                 = $09b3
-object_direction                                    = $09be
-l09d4                                               = $09d4
-current_player_animation                            = $09df
-save_game_level_e_small_egg_status                  = $0a13
-save_game_level_e_big_egg_animation_index           = $0a14
-save_game_level_e_duck_global_x_position            = $0a15
-level_workspace_small_egg_offscreen_time            = $0a6f
-l0a70                                               = $0a70
-thrown_egg_x_low                                    = $0a70
-l0a71                                               = $0a71
-thrown_egg_x_high                                   = $0a71
-l0a72                                               = $0a72
-thrown_egg_y_low                                    = $0a72
-thrown_egg_direction                                = $0a73
-small_egg_animation_table_index                     = $0a74
-room_containing_small_egg                           = $0a75
-egg_animation_index                                 = $0a76
-room_1_egg_x                                        = $0a77
-room_1_egg_y                                        = $0a78
-l0a79                                               = $0a79
-duck_x_direction                                    = $0a7a
-duck_wing_animation_index                           = $0a7b
-tile_all_set_pixels                                 = $0aa9
-developer_flags                                     = $1103
-initialise_level_and_room                           = $1140
-start_room                                          = $12bb
-game_update                                         = $12da
-update_room_first_update_flag                       = $132b
-sprite_op                                           = $138d
-toolbar_colour                                      = $175e
-gameplay_area_colour                                = $1760
-get_random_number_up_to_a                           = $18a6
-update_brazier_and_fire                             = $1988
-update_level_completion                             = $1a10
-currently_updating_logic_for_room_index             = $1aba
-copy_rectangle_of_memory_to_screen                  = $1abb
-draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
-draw_rope                                           = $1db9
-write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
-write_a_single_value_to_cell_in_collision_map       = $1ebb
-read_collision_map_value_for_xy                     = $1efa
-draw_sprite_a_at_cell_xy                            = $1f4c
-draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
-set_object_position_from_cell_xy                    = $1f5d
-set_object_position_from_current_sprite_position    = $1f6d
-copy_object_state_to_old                            = $20f7
-l2200                                               = $2200
-l2248                                               = $2248
-jmp_for_update_extra_player_character               = $22dd
-l22ed                                               = $22ed
-l22ee                                               = $22ee
-play_landing_sound                                  = $23a9
-l23c4                                               = $23c4
-player_wall_collision_reaction_speed                = $2433
-find_left_and_right_of_object                       = $2434
-temp_left_offset                                    = $24d0
-temp_right_offset                                   = $24d1
-find_top_and_bottom_of_object                       = $24d2
-temp_top_offset                                     = $2550
-temp_bottom_offset                                  = $2551
-update_object_a_solid_rock_collision                = $25f5
-update_object_hitting_floor                         = $2770
-object_has_hit_floor_flag                           = $288f
-object_just_fallen_off_edge_direction               = $2890
-get_solid_rock_collision_for_object_a               = $2894
-temp_default_collision_map_option                   = $28e1
-test_for_collision_between_objects_x_and_y          = $28e2
-desired_menu_slots                                  = $295c
-menu_index_for_extra_items                          = $296e
-insert_character_menu_item_into_toolbar             = $2b87
-find_or_create_menu_slot_for_A                      = $2bbd
-remove_item_from_toolbar_menu                       = $2be0
-player_using_object_spriteid                        = $2eb6
-previous_player_using_object_spriteid               = $2eb7
-toolbar_collectable_spriteids                       = $2ee8
-collectable_spriteids                               = $2eed
-collectable_being_used_spriteids                    = $2ef2
-monkey_base_animation                               = $30ff
-monkey_climb_idle_animation                         = $3144
-monkey_climb_down_animation                         = $3148
-monkey_climb_animation                              = $3150
-inhibit_monkey_climb_flag                           = $31d7
-object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-envelope_1_pitch_change_per_step_section_2          = $38af
-l38b1                                               = $38b1
-object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c7                                               = $38c7
-object_room_collision_flags                         = $38d8
-play_sound_yx                                       = $38f6
-define_envelope                                     = $395e
-sound_priority_per_channel_table                    = $396f
-l3ac7                                               = $3ac7
-l3ac9                                               = $3ac9
-l3aca                                               = $3aca
-l3acb                                               = $3acb
-negative_inkey                                      = $3acc
+sprite_id                                               = $16
+sprite_x_base_low                                       = $18
+sprite_x_base_high                                      = $19
+sprite_y_base_low                                       = $1a
+sprite_y_base_high                                      = $1b
+sprite_reflect_flag                                     = $1d
+l0023                                                   = $23
+desired_room_index                                      = $30
+current_level                                           = $31
+temp_sprite_x_offset                                    = $3a
+temp_sprite_y_offset                                    = $3b
+width_in_cells                                          = $3c
+height_in_cells                                         = $3d
+value_to_write_to_collision_map                         = $3e
+source_sprite_memory_low                                = $40
+source_sprite_memory_high                               = $41
+copy_mode                                               = $42
+current_player_character                                = $48
+previous_room_index                                     = $50
+level_before_latest_level_and_room_initialisation       = $51
+player_held_object_spriteid                             = $52
+developer_mode_sideways_ram_is_set_up_flag              = $5b
+l0070                                                   = $70
+object_left_low                                         = $70
+room_exit_direction                                     = $70
+object_left_high                                        = $71
+object_right_low                                        = $72
+object_right_high                                       = $73
+object_left_cell_x                                      = $78
+object_right_cell_x                                     = $79
+object_x_low                                            = $0950
+object_x_low_old                                        = $095b
+object_x_high                                           = $0966
+object_x_high_old                                       = $0971
+object_y_low                                            = $097c
+object_y_low_old                                        = $0987
+object_y_high                                           = $0992
+object_spriteid                                         = $09a8
+object_spriteid_old                                     = $09b3
+object_direction                                        = $09be
+object_current_index_in_animation                       = $09d4
+current_player_animation                                = $09df
+save_game_level_e_small_egg_status                      = $0a13
+save_game_level_e_big_egg_animation_index               = $0a14
+save_game_level_e_bird_global_x_position                = $0a15
+level_workspace_small_egg_offscreen_time                = $0a6f
+l0a70                                                   = $0a70
+thrown_egg_x_low                                        = $0a70
+l0a71                                                   = $0a71
+thrown_egg_x_high                                       = $0a71
+l0a72                                                   = $0a72
+thrown_egg_y_low                                        = $0a72
+thrown_egg_direction                                    = $0a73
+small_egg_animation_step                                = $0a74
+room_containing_small_egg                               = $0a75
+egg_animation_index                                     = $0a76
+room_1_egg_x                                            = $0a77
+room_1_egg_y                                            = $0a78
+l0a79                                                   = $0a79
+bird_x_direction                                        = $0a7a
+bird_wing_animation_index                               = $0a7b
+tile_all_set_pixels                                     = $0aa9
+developer_flags                                         = $1103
+initialise_level_and_room                               = $1140
+start_room                                              = $12bb
+game_update                                             = $12da
+update_room_first_update_flag                           = $132b
+sprite_op                                               = $138d
+toolbar_colour                                          = $175e
+gameplay_area_colour                                    = $1760
+get_random_number_up_to_a                               = $18a6
+update_brazier_and_fire                                 = $1988
+update_level_completion                                 = $1a10
+currently_updating_logic_for_room_index                 = $1aba
+copy_rectangle_of_memory_to_screen                      = $1abb
+draw_floor_walls_and_ceiling_around_solid_rock          = $1b90
+draw_rope                                               = $1db9
+write_value_to_a_rectangle_of_cells_in_collision_map    = $1e44
+write_a_single_value_to_cell_in_collision_map           = $1ebb
+read_collision_map_value_for_xy                         = $1efa
+draw_sprite_a_at_cell_xy                                = $1f4c
+draw_sprite_a_at_cell_xy_and_write_to_collision_map     = $1f57
+set_object_position_from_cell_xy                        = $1f5d
+set_object_position_from_current_sprite_position        = $1f6d
+copy_object_state_to_old                                = $20f7
+set_player_spriteid_and_offset_from_animation_table     = $2200
+update_player_accessory_object_animation                = $2248
+jmp_for_update_extra_player_character                   = $22dd
+transform_out_animation                                 = $22ed
+set_base_animation_address_and_handle_transform_in_out  = $22ee
+play_landing_sound                                      = $23a9
+update_player_hitting_floor_or_pushed                   = $23c4
+player_wall_collision_reaction_speed                    = $2433
+find_left_and_right_of_object                           = $2434
+temp_left_offset                                        = $24d0
+temp_right_offset                                       = $24d1
+find_top_and_bottom_of_object                           = $24d2
+temp_top_offset                                         = $2550
+temp_bottom_offset                                      = $2551
+update_object_a_solid_rock_collision                    = $25f5
+update_object_hitting_floor                             = $2770
+object_has_hit_floor_flag                               = $288f
+object_just_fallen_off_edge_direction                   = $2890
+get_solid_rock_collision_for_object_a                   = $2894
+temp_default_collision_map_option                       = $28e1
+test_for_collision_between_objects_x_and_y              = $28e2
+desired_menu_slots                                      = $295c
+menu_index_for_extra_items                              = $296e
+insert_character_menu_item_into_toolbar                 = $2b87
+find_or_create_menu_slot_for_A                          = $2bbd
+remove_item_from_toolbar_menu                           = $2be0
+player_using_object_spriteid                            = $2eb6
+previous_player_using_object_spriteid                   = $2eb7
+toolbar_collectable_spriteids                           = $2ee8
+collectable_spriteids                                   = $2eed
+collectable_being_used_spriteids                        = $2ef2
+monkey_base_animation                                   = $30ff
+monkey_climb_idle_animation                             = $3144
+monkey_climb_down_animation                             = $3148
+monkey_climb_animation                                  = $3150
+inhibit_monkey_climb_flag                               = $31d7
+object_erase_type                                       = $38ac
+object_z_order                                          = $38c2
+object_room_collision_flags                             = $38d8
+play_sound_yx                                           = $38f6
+define_envelope                                         = $395e
+sound_priority_per_channel_table                        = $396f
+l3ac7                                                   = $3ac7
+l3ac9                                                   = $3ac9
+l3aca                                                   = $3aca
+l3acb                                                   = $3acb
+negative_inkey                                          = $3acc
 
     * = $3ad5
 
@@ -339,12 +331,12 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af8: c5 51
-    beq duck_not_captured_yet                                         ; 3afa: f0 25
+    beq bird_not_captured_yet                                         ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_not_active                                     ; 3aff: 10 0a
     lda #small_egg_status_collected                                   ; 3b01: a9 ff
     sta save_game_level_e_small_egg_status                            ; 3b03: 8d 13 0a
-    lda #spriteid_duck_toolbar                                        ; 3b06: a9 d1
+    lda #spriteid_bird_toolbar                                        ; 3b06: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b08: 20 87 2b
 developer_mode_not_active
     lda save_game_level_e_small_egg_status                            ; 3b0b: ad 13 0a
@@ -352,19 +344,19 @@ developer_mode_not_active
     lda #spriteid_egg_toolbar                                         ; 3b10: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b12: 20 bd 2b
 dont_have_egg
-    lda save_game_level_e_duck_global_x_position                      ; 3b15: ad 15 0a
+    lda save_game_level_e_bird_global_x_position                      ; 3b15: ad 15 0a
     cmp #$ff                                                          ; 3b18: c9 ff
-    bne duck_not_captured_yet                                         ; 3b1a: d0 05
-    lda #spriteid_duck_toolbar                                        ; 3b1c: a9 d1
+    bne bird_not_captured_yet                                         ; 3b1a: d0 05
+    lda #spriteid_bird_toolbar                                        ; 3b1c: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b1e: 20 87 2b
-duck_not_captured_yet
+bird_not_captured_yet
     lda #<update_bird                                                 ; 3b21: a9 b8
     sta jmp_for_update_extra_player_character + 1                     ; 3b23: 8d de 22
     lda #>update_bird                                                 ; 3b26: a9 3e
     sta jmp_for_update_extra_player_character + 2                     ; 3b28: 8d df 22
-    lda #<source_sprite_data                                          ; 3b2b: a9 0c
+    lda #<ground_fill_2x2_top_left                                    ; 3b2b: a9 0c
     sta source_sprite_memory_low                                      ; 3b2d: 85 40
-    lda #>source_sprite_data                                          ; 3b2f: a9 46
+    lda #>ground_fill_2x2_top_left                                    ; 3b2f: a9 46
     sta source_sprite_memory_high                                     ; 3b31: 85 41
     rts                                                               ; 3b33: 60
 
@@ -386,28 +378,146 @@ level_specific_update
     jmp room_3_update_handler                                         ; 3b3d: 4c 96 3e
 
 ; This table is 0-terminated
-duck_wing_animation_table
-    !byte spriteid_duck_wing_1, spriteid_duck_wing_2                  ; 3b40: ce cf
-    !byte spriteid_duck_wing_3, spriteid_duck_wing_2                  ; 3b42: d0 cf
+bird_wing_animation_table
+    !byte spriteid_bird_wing_1, spriteid_bird_wing_2                  ; 3b40: ce cf
+    !byte spriteid_bird_wing_3, spriteid_bird_wing_2                  ; 3b42: d0 cf
     !byte                    0,                    0                  ; 3b44: 00 00
-l3b46
-    !byte   0,   0,   0,   0, $cd,   0,   0,   0, $cd,   0,   0,   0  ; 3b46: 00 00 00...
-    !byte $cc,   0,   0,   0, $cc,   0,   0,   0, $c8,   0,   0,   0  ; 3b52: cc 00 00...
-    !byte $c8,   0,   0,   0,   0, $c8,   0,   0,   0, $c8,   0,   0  ; 3b5e: c8 00 00...
-    !byte   0, $cc,   0,   0,   0, $cc,   0,   0,   0, $cd,   0,   0  ; 3b6a: 00 cc 00...
-    !byte   0, $cd,   0,   0,   0,   0, $c8,   0,   0,   0,   0, $ca  ; 3b76: 00 cd 00...
-    !byte   0, $fc,   0, $c9,   2, $fe,   0,   0, $c8,   0,   0,   0  ; 3b82: 00 fc 00...
-    !byte   0, $c9,   0,   0, $ff,   0, $c9,   0, $fc, $ff,   0, $c9  ; 3b8e: 00 c9 00...
-    !byte   4,   0, $ff,   0, $c9,   4, $fc, $ff,   0, $ca,   0,   0  ; 3b9a: 04 00 ff...
-    !byte $ff, $c9,   2,   0, $ff,   0, $c9,   4, $fc,   0, $c9,   4  ; 3ba6: ff c9 02...
-    !byte $fe,   0,   0, $c8,   4,   2,   0, $c8,   4,   4,   0, $c8  ; 3bb2: fe 00 00...
-    !byte   2,   4,   0,   0, $c8,   3,   1,   0, $c8,   2,   3,   0  ; 3bbe: 02 04 00...
-    !byte $c8,   1,   5,   0,   0, $c8,   4,   2,   0, $c8,   3,   3  ; 3bca: c8 01 05...
-    !byte   0, $c8,   2,   4,   0, $c8,   1,   5,   0,   0, $c8, $fc  ; 3bd6: 00 c8 02...
-    !byte   2,   0, $c8, $fd,   3,   0, $c8, $fe,   4,   0, $c8, $ff  ; 3be2: 02 00 c8...
-    !byte   5,   0,   0, $c8,   0,   1,   0, $c8,   0,   2,   0, $c8  ; 3bee: 05 00 00...
-    !byte   0,   3,   0, $c8,   0,   4,   0, $c8,   0,   5,   0,   0  ; 3bfa: 00 03 00...
-    !byte $c8,   0,   7,   0,   0                                     ; 3c06: c8 00 07...
+bird_character_animations
+    !byte 0, 0, 0, 0                                                  ; 3b46: 00 00 00...
+    !byte spriteid_bird_transform_2                                   ; 3b4a: cd
+    !byte 0, 0, 0                                                     ; 3b4b: 00 00 00
+    !byte spriteid_bird_transform_2                                   ; 3b4e: cd
+    !byte 0, 0, 0                                                     ; 3b4f: 00 00 00
+    !byte spriteid_bird_transform_1                                   ; 3b52: cc
+    !byte 0, 0, 0                                                     ; 3b53: 00 00 00
+    !byte spriteid_bird_transform_1                                   ; 3b56: cc
+    !byte 0, 0, 0                                                     ; 3b57: 00 00 00
+    !byte spriteid_bird_1                                             ; 3b5a: c8
+    !byte 0, 0, 0                                                     ; 3b5b: 00 00 00
+    !byte spriteid_bird_1                                             ; 3b5e: c8
+    !byte 0, 0, 0, 0                                                  ; 3b5f: 00 00 00...
+    !byte spriteid_bird_1                                             ; 3b63: c8
+    !byte 0, 0, 0                                                     ; 3b64: 00 00 00
+    !byte spriteid_bird_1                                             ; 3b67: c8
+    !byte 0, 0, 0                                                     ; 3b68: 00 00 00
+    !byte spriteid_bird_transform_1                                   ; 3b6b: cc
+    !byte 0, 0, 0                                                     ; 3b6c: 00 00 00
+    !byte spriteid_bird_transform_1                                   ; 3b6f: cc
+    !byte 0, 0, 0                                                     ; 3b70: 00 00 00
+    !byte spriteid_bird_transform_2                                   ; 3b73: cd
+    !byte 0, 0, 0                                                     ; 3b74: 00 00 00
+    !byte spriteid_bird_transform_2                                   ; 3b77: cd
+    !byte 0, 0, 0, 0                                                  ; 3b78: 00 00 00...
+    !byte spriteid_bird_1                                             ; 3b7c: c8
+    !byte 0, 0, 0, 0                                                  ; 3b7d: 00 00 00...
+    !byte spriteid_bird_3                                             ; 3b81: ca
+    !byte   0, $fc,   0                                               ; 3b82: 00 fc 00
+    !byte spriteid_bird_2                                             ; 3b85: c9
+    !byte spriteid_icodata_sound                                      ; 3b86: 02
+    !byte $fe,   0,   0                                               ; 3b87: fe 00 00
+    !byte spriteid_bird_1                                             ; 3b8a: c8
+    !byte 0, 0, 0, 0                                                  ; 3b8b: 00 00 00...
+    !byte spriteid_bird_2                                             ; 3b8f: c9
+    !byte   0,   0, $ff,   0                                          ; 3b90: 00 00 ff...
+    !byte spriteid_bird_2                                             ; 3b94: c9
+    !byte   0, $fc, $ff,   0                                          ; 3b95: 00 fc ff...
+    !byte spriteid_bird_2                                             ; 3b99: c9
+    !byte spriteid_icodata_wizard                                     ; 3b9a: 04
+    !byte   0, $ff,   0                                               ; 3b9b: 00 ff 00
+    !byte spriteid_bird_2                                             ; 3b9e: c9
+    !byte spriteid_icodata_wizard                                     ; 3b9f: 04
+    !byte $fc, $ff,   0                                               ; 3ba0: fc ff 00
+    !byte spriteid_bird_3                                             ; 3ba3: ca
+    !byte   0,   0, $ff                                               ; 3ba4: 00 00 ff
+    !byte spriteid_bird_2                                             ; 3ba7: c9
+    !byte spriteid_icodata_sound                                      ; 3ba8: 02
+    !byte   0, $ff,   0                                               ; 3ba9: 00 ff 00
+    !byte spriteid_bird_2                                             ; 3bac: c9
+    !byte spriteid_icodata_wizard                                     ; 3bad: 04
+    !byte $fc,   0                                                    ; 3bae: fc 00
+    !byte spriteid_bird_2                                             ; 3bb0: c9
+    !byte spriteid_icodata_wizard                                     ; 3bb1: 04
+    !byte $fe,   0,   0                                               ; 3bb2: fe 00 00
+    !byte spriteid_bird_1                                             ; 3bb5: c8
+    !byte spriteid_icodata_wizard                                     ; 3bb6: 04
+    !byte spriteid_icodata_sound                                      ; 3bb7: 02
+    !byte 0                                                           ; 3bb8: 00
+    !byte spriteid_bird_1                                             ; 3bb9: c8
+    !byte spriteid_icodata_wizard                                     ; 3bba: 04
+    !byte spriteid_icodata_wizard                                     ; 3bbb: 04
+    !byte 0                                                           ; 3bbc: 00
+    !byte spriteid_bird_1                                             ; 3bbd: c8
+    !byte spriteid_icodata_sound                                      ; 3bbe: 02
+    !byte spriteid_icodata_wizard                                     ; 3bbf: 04
+    !byte 0, 0                                                        ; 3bc0: 00 00
+    !byte spriteid_bird_1                                             ; 3bc2: c8
+    !byte spriteid_icodata_disc                                       ; 3bc3: 03
+    !byte spriteid_icon_background                                    ; 3bc4: 01
+    !byte 0                                                           ; 3bc5: 00
+    !byte spriteid_bird_1                                             ; 3bc6: c8
+    !byte spriteid_icodata_sound                                      ; 3bc7: 02
+    !byte spriteid_icodata_disc                                       ; 3bc8: 03
+    !byte 0                                                           ; 3bc9: 00
+    !byte spriteid_bird_1                                             ; 3bca: c8
+    !byte spriteid_icon_background                                    ; 3bcb: 01
+    !byte spriteid_icodata_cat                                        ; 3bcc: 05
+    !byte 0, 0                                                        ; 3bcd: 00 00
+    !byte spriteid_bird_1                                             ; 3bcf: c8
+    !byte spriteid_icodata_wizard                                     ; 3bd0: 04
+    !byte spriteid_icodata_sound                                      ; 3bd1: 02
+    !byte 0                                                           ; 3bd2: 00
+    !byte spriteid_bird_1                                             ; 3bd3: c8
+    !byte spriteid_icodata_disc                                       ; 3bd4: 03
+    !byte spriteid_icodata_disc                                       ; 3bd5: 03
+    !byte 0                                                           ; 3bd6: 00
+    !byte spriteid_bird_1                                             ; 3bd7: c8
+    !byte spriteid_icodata_sound                                      ; 3bd8: 02
+    !byte spriteid_icodata_wizard                                     ; 3bd9: 04
+    !byte 0                                                           ; 3bda: 00
+    !byte spriteid_bird_1                                             ; 3bdb: c8
+    !byte spriteid_icon_background                                    ; 3bdc: 01
+    !byte spriteid_icodata_cat                                        ; 3bdd: 05
+    !byte 0, 0                                                        ; 3bde: 00 00
+    !byte spriteid_bird_1                                             ; 3be0: c8
+    !byte $fc                                                         ; 3be1: fc
+    !byte spriteid_icodata_sound                                      ; 3be2: 02
+    !byte 0                                                           ; 3be3: 00
+    !byte spriteid_bird_1                                             ; 3be4: c8
+    !byte $fd                                                         ; 3be5: fd
+    !byte spriteid_icodata_disc                                       ; 3be6: 03
+    !byte 0                                                           ; 3be7: 00
+    !byte spriteid_bird_1                                             ; 3be8: c8
+    !byte $fe                                                         ; 3be9: fe
+    !byte spriteid_icodata_wizard                                     ; 3bea: 04
+    !byte 0                                                           ; 3beb: 00
+    !byte spriteid_bird_1                                             ; 3bec: c8
+    !byte $ff                                                         ; 3bed: ff
+    !byte spriteid_icodata_cat                                        ; 3bee: 05
+    !byte 0, 0                                                        ; 3bef: 00 00
+    !byte spriteid_bird_1                                             ; 3bf1: c8
+    !byte 0                                                           ; 3bf2: 00
+    !byte spriteid_icon_background                                    ; 3bf3: 01
+    !byte 0                                                           ; 3bf4: 00
+    !byte spriteid_bird_1                                             ; 3bf5: c8
+    !byte 0                                                           ; 3bf6: 00
+    !byte spriteid_icodata_sound                                      ; 3bf7: 02
+    !byte 0                                                           ; 3bf8: 00
+    !byte spriteid_bird_1                                             ; 3bf9: c8
+    !byte 0                                                           ; 3bfa: 00
+    !byte spriteid_icodata_disc                                       ; 3bfb: 03
+    !byte 0                                                           ; 3bfc: 00
+    !byte spriteid_bird_1                                             ; 3bfd: c8
+    !byte 0                                                           ; 3bfe: 00
+    !byte spriteid_icodata_wizard                                     ; 3bff: 04
+    !byte 0                                                           ; 3c00: 00
+    !byte spriteid_bird_1                                             ; 3c01: c8
+    !byte 0                                                           ; 3c02: 00
+    !byte spriteid_icodata_cat                                        ; 3c03: 05
+    !byte 0, 0                                                        ; 3c04: 00 00
+    !byte spriteid_bird_1                                             ; 3c06: c8
+    !byte 0                                                           ; 3c07: 00
+    !byte spriteid_icodata_info                                       ; 3c08: 07
+    !byte 0, 0                                                        ; 3c09: 00 00
 
 draw_sprite_nest_at_cell_xy_and_write_to_collision_map
     lda #3                                                            ; 3c0b: a9 03
@@ -571,7 +681,7 @@ room_2_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3cee: ad 2b 13
     beq room_2_not_first_update                                       ; 3cf1: f0 47
-    lda save_game_level_e_duck_global_x_position                      ; 3cf3: ad 15 0a
+    lda save_game_level_e_bird_global_x_position                      ; 3cf3: ad 15 0a
     cmp #$ff                                                          ; 3cf6: c9 ff
     beq c3d34                                                         ; 3cf8: f0 3a
 ; check for level change (branch if not)
@@ -579,37 +689,37 @@ room_2_update_handler
     cmp level_before_latest_level_and_room_initialisation             ; 3cfc: c5 51
     beq c3d12                                                         ; 3cfe: f0 12
     lda #$73 ; 's'                                                    ; 3d00: a9 73
-    sta save_game_level_e_duck_global_x_position                      ; 3d02: 8d 15 0a
+    sta save_game_level_e_bird_global_x_position                      ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
     sta l0a79                                                         ; 3d07: 8d 79 0a
-    sta duck_x_direction                                              ; 3d0a: 8d 7a 0a
+    sta bird_x_direction                                              ; 3d0a: 8d 7a 0a
     lda #0                                                            ; 3d0d: a9 00
-    sta duck_wing_animation_index                                     ; 3d0f: 8d 7b 0a
+    sta bird_wing_animation_index                                     ; 3d0f: 8d 7b 0a
 c3d12
     lda desired_room_index                                            ; 3d12: a5 30
     beq c3d34                                                         ; 3d14: f0 1e
     cmp #3                                                            ; 3d16: c9 03
     bcs c3d34                                                         ; 3d18: b0 1a
-    lda #$df                                                          ; 3d1a: a9 df
-    sta l38b1                                                         ; 3d1c: 8d b1 38
+    lda #spriteid_cache3                                              ; 3d1a: a9 df
+    sta object_erase_type + objectid_bird_wings                       ; 3d1c: 8d b1 38
     lda #$fe                                                          ; 3d1f: a9 fe
-    sta l38c7                                                         ; 3d21: 8d c7 38
+    sta object_z_order + objectid_bird_wings                          ; 3d21: 8d c7 38
     lda #$2c ; ','                                                    ; 3d24: a9 2c
-    sta object_y_low + 4                                              ; 3d26: 8d 80 09
-    sta object_y_low + 5                                              ; 3d29: 8d 81 09
+    sta object_y_low + objectid_bird                                  ; 3d26: 8d 80 09
+    sta object_y_low + objectid_bird_wings                            ; 3d29: 8d 81 09
     lda #0                                                            ; 3d2c: a9 00
-    sta object_y_high + 4                                             ; 3d2e: 8d 96 09
-    sta object_y_high + 5                                             ; 3d31: 8d 97 09
+    sta object_y_high + objectid_bird                                 ; 3d2e: 8d 96 09
+    sta object_y_high + objectid_bird_wings                           ; 3d31: 8d 97 09
 c3d34
     jmp c3d9f                                                         ; 3d34: 4c 9f 3d
 
-c3d37
+return1_local
     jmp return1                                                       ; 3d37: 4c f6 3d
 
 room_2_not_first_update
-    lda save_game_level_e_duck_global_x_position                      ; 3d3a: ad 15 0a
+    lda save_game_level_e_bird_global_x_position                      ; 3d3a: ad 15 0a
     cmp #$ff                                                          ; 3d3d: c9 ff
-    beq c3d37                                                         ; 3d3f: f0 f6
+    beq return1_local                                                 ; 3d3f: f0 f6
     lda desired_room_index                                            ; 3d41: a5 30
     cmp #2                                                            ; 3d43: c9 02
     bne c3d64                                                         ; 3d45: d0 1d
@@ -620,59 +730,59 @@ room_2_not_first_update
     lda #$d1                                                          ; 3d50: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3d52: 20 87 2b
     lda #spriteid_one_pixel_masked_out                                ; 3d55: a9 00
-    sta object_spriteid + 4                                           ; 3d57: 8d ac 09
-    sta object_spriteid + 5                                           ; 3d5a: 8d ad 09
+    sta object_spriteid + objectid_bird                               ; 3d57: 8d ac 09
+    sta object_spriteid + objectid_bird_wings                         ; 3d5a: 8d ad 09
     lda #$ff                                                          ; 3d5d: a9 ff
-    sta save_game_level_e_duck_global_x_position                      ; 3d5f: 8d 15 0a
-    bmi c3d37                                                         ; 3d62: 30 d3
+    sta save_game_level_e_bird_global_x_position                      ; 3d5f: 8d 15 0a
+    bmi return1_local                                                 ; 3d62: 30 d3
 c3d64
-    ldy duck_wing_animation_index                                     ; 3d64: ac 7b 0a
+    ldy bird_wing_animation_index                                     ; 3d64: ac 7b 0a
     iny                                                               ; 3d67: c8
-    lda duck_wing_animation_table,y                                   ; 3d68: b9 40 3b
+    lda bird_wing_animation_table,y                                   ; 3d68: b9 40 3b
     bne c3d6f                                                         ; 3d6b: d0 02
     ldy #0                                                            ; 3d6d: a0 00
 c3d6f
-    sty duck_wing_animation_index                                     ; 3d6f: 8c 7b 0a
-    lda duck_x_direction                                              ; 3d72: ad 7a 0a
+    sty bird_wing_animation_index                                     ; 3d6f: 8c 7b 0a
+    lda bird_x_direction                                              ; 3d72: ad 7a 0a
     bne c3d85                                                         ; 3d75: d0 0e
     lda l0a79                                                         ; 3d77: ad 79 0a
     eor #$fe                                                          ; 3d7a: 49 fe
     sta l0a79                                                         ; 3d7c: 8d 79 0a
-    sta duck_x_direction                                              ; 3d7f: 8d 7a 0a
+    sta bird_x_direction                                              ; 3d7f: 8d 7a 0a
     jmp c3d95                                                         ; 3d82: 4c 95 3d
 
 c3d85
-    lda save_game_level_e_duck_global_x_position                      ; 3d85: ad 15 0a
-    cmp #duck_min_global_x_position                                   ; 3d88: c9 1e
-    beq duck_hit_min_or_max_global_x_position                         ; 3d8a: f0 04
-    cmp #duck_max_global_x_position                                   ; 3d8c: c9 74
+    lda save_game_level_e_bird_global_x_position                      ; 3d85: ad 15 0a
+    cmp #bird_min_global_x_position                                   ; 3d88: c9 1e
+    beq bird_hit_min_or_max_global_x_position                         ; 3d8a: f0 04
+    cmp #bird_max_global_x_position                                   ; 3d8c: c9 74
     bne c3d95                                                         ; 3d8e: d0 05
-duck_hit_min_or_max_global_x_position
+bird_hit_min_or_max_global_x_position
     lda #0                                                            ; 3d90: a9 00
-    sta duck_x_direction                                              ; 3d92: 8d 7a 0a
+    sta bird_x_direction                                              ; 3d92: 8d 7a 0a
 c3d95
-    lda save_game_level_e_duck_global_x_position                      ; 3d95: ad 15 0a
+    lda save_game_level_e_bird_global_x_position                      ; 3d95: ad 15 0a
     clc                                                               ; 3d98: 18
-    adc duck_x_direction                                              ; 3d99: 6d 7a 0a
-    sta save_game_level_e_duck_global_x_position                      ; 3d9c: 8d 15 0a
+    adc bird_x_direction                                              ; 3d99: 6d 7a 0a
+    sta save_game_level_e_bird_global_x_position                      ; 3d9c: 8d 15 0a
 c3d9f
-    lda save_game_level_e_duck_global_x_position                      ; 3d9f: ad 15 0a
+    lda save_game_level_e_bird_global_x_position                      ; 3d9f: ad 15 0a
     cmp #$ff                                                          ; 3da2: c9 ff
     beq return1                                                       ; 3da4: f0 50
     lda desired_room_index                                            ; 3da6: a5 30
     beq return1                                                       ; 3da8: f0 4c
     cmp #3                                                            ; 3daa: c9 03
     bcs return1                                                       ; 3dac: b0 48
-    lda #$c9                                                          ; 3dae: a9 c9
-    ldx duck_x_direction                                              ; 3db0: ae 7a 0a
+    lda #spriteid_bird_2                                              ; 3dae: a9 c9
+    ldx bird_x_direction                                              ; 3db0: ae 7a 0a
     bne c3db7                                                         ; 3db3: d0 02
-    lda #$ca                                                          ; 3db5: a9 ca
+    lda #spriteid_bird_3                                              ; 3db5: a9 ca
 c3db7
-    sta object_spriteid + 4                                           ; 3db7: 8d ac 09
-    ldy duck_wing_animation_index                                     ; 3dba: ac 7b 0a
-    lda duck_wing_animation_table,y                                   ; 3dbd: b9 40 3b
-    sta object_spriteid + 5                                           ; 3dc0: 8d ad 09
-    lda save_game_level_e_duck_global_x_position                      ; 3dc3: ad 15 0a
+    sta object_spriteid + objectid_bird                               ; 3db7: 8d ac 09
+    ldy bird_wing_animation_index                                     ; 3dba: ac 7b 0a
+    lda bird_wing_animation_table,y                                   ; 3dbd: b9 40 3b
+    sta object_spriteid + objectid_bird_wings                         ; 3dc0: 8d ad 09
+    lda save_game_level_e_bird_global_x_position                      ; 3dc3: ad 15 0a
     ldx desired_room_index                                            ; 3dc6: a6 30
     cpx #2                                                            ; 3dc8: e0 02
     beq c3dcf                                                         ; 3dca: f0 03
@@ -684,18 +794,18 @@ c3dcf
     bcc c3dd6                                                         ; 3dd3: 90 01
     dex                                                               ; 3dd5: ca
 c3dd6
-    stx object_x_high + 4                                             ; 3dd6: 8e 6a 09
+    stx object_x_high + objectid_bird                                 ; 3dd6: 8e 6a 09
     asl                                                               ; 3dd9: 0a
-    rol object_x_high + 4                                             ; 3dda: 2e 6a 09
+    rol object_x_high + objectid_bird                                 ; 3dda: 2e 6a 09
     asl                                                               ; 3ddd: 0a
-    rol object_x_high + 4                                             ; 3dde: 2e 6a 09
-    sta object_x_low + 4                                              ; 3de1: 8d 54 09
-    sta object_x_low + 5                                              ; 3de4: 8d 55 09
-    lda object_x_high + 4                                             ; 3de7: ad 6a 09
-    sta object_x_high + 5                                             ; 3dea: 8d 6b 09
+    rol object_x_high + objectid_bird                                 ; 3dde: 2e 6a 09
+    sta object_x_low + objectid_bird                                  ; 3de1: 8d 54 09
+    sta object_x_low + objectid_bird_wings                            ; 3de4: 8d 55 09
+    lda object_x_high + objectid_bird                                 ; 3de7: ad 6a 09
+    sta object_x_high + objectid_bird_wings                           ; 3dea: 8d 6b 09
     lda l0a79                                                         ; 3ded: ad 79 0a
-    sta object_direction + 4                                          ; 3df0: 8d c2 09
-    sta object_direction + 5                                          ; 3df3: 8d c3 09
+    sta object_direction + objectid_bird                              ; 3df0: 8d c2 09
+    sta object_direction + objectid_bird_wings                        ; 3df3: 8d c3 09
 return1
     rts                                                               ; 3df6: 60
 
@@ -837,11 +947,11 @@ room_3_update_handler
 
 update_bird
     lda #$1d                                                          ; 3eb8: a9 1d
-    sta l22ed                                                         ; 3eba: 8d ed 22
+    sta transform_out_animation                                       ; 3eba: 8d ed 22
     ldx #$46 ; 'F'                                                    ; 3ebd: a2 46
     ldy #$3b ; ';'                                                    ; 3ebf: a0 3b
     lda #4                                                            ; 3ec1: a9 04
-    jsr l22ee                                                         ; 3ec3: 20 ee 22
+    jsr set_base_animation_address_and_handle_transform_in_out        ; 3ec3: 20 ee 22
     bne c3f3a                                                         ; 3ec6: d0 72
     cpy #$3f ; '?'                                                    ; 3ec8: c0 3f
     beq c3ed0                                                         ; 3eca: f0 04
@@ -854,7 +964,7 @@ c3ed0
     jmp c3fca                                                         ; 3ed8: 4c ca 3f
 
 c3edb
-    jsr l23c4                                                         ; 3edb: 20 c4 23
+    jsr update_player_hitting_floor_or_pushed                         ; 3edb: 20 c4 23
     beq c3ee3                                                         ; 3ede: f0 03
     jmp c3f61                                                         ; 3ee0: 4c 61 3f
 
@@ -978,25 +1088,25 @@ c3fb7
     beq c3fca                                                         ; 3fc6: f0 02
     ldy #$9a                                                          ; 3fc8: a0 9a
 c3fca
-    sty l09d4                                                         ; 3fca: 8c d4 09
+    sty object_current_index_in_animation                             ; 3fca: 8c d4 09
     tya                                                               ; 3fcd: 98
     ldx #$46 ; 'F'                                                    ; 3fce: a2 46
     ldy #$3b ; ';'                                                    ; 3fd0: a0 3b
-    jsr l2200                                                         ; 3fd2: 20 00 22
+    jsr set_player_spriteid_and_offset_from_animation_table           ; 3fd2: 20 00 22
     lda #0                                                            ; 3fd5: a9 00
     jsr update_object_a_solid_rock_collision                          ; 3fd7: 20 f5 25
     lda #$40 ; '@'                                                    ; 3fda: a9 40
     sta room_exit_direction                                           ; 3fdc: 85 70
     lda #$3b ; ';'                                                    ; 3fde: a9 3b
     sta object_left_high                                              ; 3fe0: 85 71
-    ldx l09d4                                                         ; 3fe2: ae d4 09
+    ldx object_current_index_in_animation                             ; 3fe2: ae d4 09
     inx                                                               ; 3fe5: e8
     inx                                                               ; 3fe6: e8
     inx                                                               ; 3fe7: e8
-    lda l3b46,x                                                       ; 3fe8: bd 46 3b
+    lda bird_character_animations,x                                   ; 3fe8: bd 46 3b
     ldx #$45 ; 'E'                                                    ; 3feb: a2 45
     ldy #$3b ; ';'                                                    ; 3fed: a0 3b
-    jmp l2248                                                         ; 3fef: 4c 48 22
+    jmp update_player_accessory_object_animation                      ; 3fef: 4c 48 22
 
 ; *************************************************************************************
 ; 
@@ -1123,27 +1233,25 @@ room_0_game_update_loop
     ldy current_level                                                 ; 4094: a4 31
     jmp initialise_level_and_room                                     ; 4096: 4c 40 11
 
-; TODO: table with entries in groups of three bytes, probably similar to the table in
-; the other level
-; Table of animations for TODO: what?. There are three bytes per entry. First byte is a
-; sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets,
-; added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss
-; of object TODO. Each animation is terminated with an extra zero byte.
-small_egg_animation_table
+; Table for the small egg animations. Each step in an animation is three bytes:
+; (0) spriteid, (1) X offset, (2) Y offset.
+; Each animation is terminated by an extra zero byte.
+small_egg_animations
     !byte 0                                                           ; 4099: 00
-small_egg_animation_table_subseq2
+small_egg_stationary_animation
     !byte spriteid_small_egg_upright                                  ; 409a: da
     !byte 0                                                           ; 409b: 00
     !byte 0                                                           ; 409c: 00
     !byte 0                                                           ; 409d: 00
-small_egg_animation_table_subseq1
-    !byte 0                                                           ; 409e: 00
+small_egg_start_throwing_animation
+    !byte spriteid_one_pixel_masked_out                               ; 409e: 00
     !byte 0                                                           ; 409f: 00
     !byte 0                                                           ; 40a0: 00
     !byte spriteid_small_egg_right                                    ; 40a1: d7
     !byte $0a                                                         ; 40a2: 0a
     !byte 1                                                           ; 40a3: 01
     !byte 0                                                           ; 40a4: 00
+small_egg_thrown_right_animation
     !byte spriteid_small_egg_right                                    ; 40a5: d7
     !byte 8                                                           ; 40a6: 08
     !byte 0                                                           ; 40a7: 00
@@ -1169,6 +1277,7 @@ small_egg_animation_table_subseq1
     !byte 8                                                           ; 40bb: 08
     !byte 0                                                           ; 40bc: 00
     !byte 0                                                           ; 40bd: 00
+small_egg_thrown_left_animation
     !byte spriteid_small_egg_right                                    ; 40be: d7
     !byte $fc                                                         ; 40bf: fc
     !byte 0                                                           ; 40c0: 00
@@ -1182,6 +1291,7 @@ small_egg_animation_table_subseq1
     !byte 0                                                           ; 40c8: 00
     !byte 6                                                           ; 40c9: 06
     !byte 0                                                           ; 40ca: 00
+small_egg_falling_animation
     !byte spriteid_small_egg_upright                                  ; 40cb: da
     !byte 0                                                           ; 40cc: 00
     !byte 8                                                           ; 40cd: 08
@@ -1227,24 +1337,24 @@ room0_first_update
     sta thrown_egg_x_high                                             ; 4115: 8d 71 0a
     lda #$3a ; ':'                                                    ; 4118: a9 3a
     sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
-    lda #small_egg_status_on_ground                                   ; 411d: a9 01
+    lda #small_egg_stationary_animation - small_egg_animations        ; 411d: a9 01
     sta save_game_level_e_small_egg_status                            ; 411f: 8d 13 0a
-    sta small_egg_animation_table_index                               ; 4122: 8d 74 0a
+    sta small_egg_animation_step                                      ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
     sta level_workspace_small_egg_offscreen_time                      ; 4127: 8d 6f 0a
 c412a
-    lda #$d6                                                          ; 412a: a9 d6
-    sta l38ae                                                         ; 412c: 8d ae 38
+    lda #spriteid_cache1                                              ; 412a: a9 d6
+    sta object_erase_type + objectid_small_egg                        ; 412c: 8d ae 38
     lda #$c0                                                          ; 412f: a9 c0
-    sta l38c4                                                         ; 4131: 8d c4 38
+    sta object_z_order + objectid_small_egg                           ; 4131: 8d c4 38
     lda desired_room_index                                            ; 4134: a5 30
     cmp room_containing_small_egg                                     ; 4136: cd 75 0a
     bne skip_small_egg_setup                                          ; 4139: d0 2b
     lda save_game_level_e_small_egg_status                            ; 413b: ad 13 0a
     bmi skip_small_egg_setup                                          ; 413e: 30 26                   ; branch if have collected egg
     jsr update_object_properties_for_small_egg                        ; 4140: 20 1d 43
-    ldy small_egg_animation_table_index                               ; 4143: ac 74 0a
-    lda small_egg_animation_table,y                                   ; 4146: b9 99 40
+    ldy small_egg_animation_step                                      ; 4143: ac 74 0a
+    lda small_egg_animations,y                                        ; 4146: b9 99 40
     sta object_spriteid + objectid_small_egg                          ; 4149: 8d aa 09
 ; Update the egg position repeatedly (without updating the screen) to catch up on any
 ; missed animation between it being thrown off screen and now when we are going to see
@@ -1304,10 +1414,10 @@ have_small_egg
     sta thrown_egg_x_high                                             ; 41b8: 8d 71 0a
     lda object_y_low + objectid_player_accessory                      ; 41bb: ad 7d 09
     sta thrown_egg_y_low                                              ; 41be: 8d 72 0a
-    lda #small_egg_status_being_thrown                                ; 41c1: a9 0c
+    lda #small_egg_thrown_right_animation - small_egg_animations      ; 41c1: a9 0c
     sta save_game_level_e_small_egg_status                            ; 41c3: 8d 13 0a
-    lda #small_egg_animation_table_subseq1 - small_egg_animation_table; 41c6: a9 05
-    sta small_egg_animation_table_index                               ; 41c8: 8d 74 0a
+    lda #small_egg_start_throwing_animation - small_egg_animations    ; 41c6: a9 05
+    sta small_egg_animation_step                                      ; 41c8: 8d 74 0a
     jsr update_object_properties_for_small_egg                        ; 41cb: 20 1d 43
     lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + objectid_small_egg                          ; 41d1: 8d aa 09
@@ -1357,16 +1467,16 @@ return2
     rts                                                               ; 4230: 60
 
 small_egg_animation_update
-    lda small_egg_animation_table_index                               ; 4231: ad 74 0a
+    lda small_egg_animation_step                                      ; 4231: ad 74 0a
     clc                                                               ; 4234: 18
     adc #3                                                            ; 4235: 69 03
     tay                                                               ; 4237: a8
-    lda small_egg_animation_table,y                                   ; 4238: b9 99 40
+    lda small_egg_animations,y                                        ; 4238: b9 99 40
     bne c4240                                                         ; 423b: d0 03
     ldy save_game_level_e_small_egg_status                            ; 423d: ac 13 0a
 c4240
     lda save_game_level_e_small_egg_status                            ; 4240: ad 13 0a
-    cmp #small_egg_status_being_thrown                                ; 4243: c9 0c
+    cmp #small_egg_thrown_right_animation - small_egg_animations      ; 4243: c9 0c
     bne small_egg_not_being_thrown                                    ; 4245: d0 23
     lda thrown_egg_direction                                          ; 4247: ad 73 0a
     bmi small_egg_thrown_left                                         ; 424a: 30 05
@@ -1379,32 +1489,32 @@ small_egg_temp_left_right_offset_set
     sta temp_bottom_offset                                            ; 4256: 8d 51 25
     lda #2                                                            ; 4259: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 425b: 20 94 28
-    beq c4284                                                         ; 425e: f0 24
-    lda #small_egg_status_falling                                     ; 4260: a9 32
+    beq set_small_egg_animation_step                                  ; 425e: f0 24
+    lda #small_egg_falling_animation - small_egg_animations           ; 4260: a9 32
     sta save_game_level_e_small_egg_status                            ; 4262: 8d 13 0a
-    ldy #$25 ; '%'                                                    ; 4265: a0 25
-    jmp c4284                                                         ; 4267: 4c 84 42
+    ldy #small_egg_thrown_left_animation - small_egg_animations       ; 4265: a0 25
+    jmp set_small_egg_animation_step                                  ; 4267: 4c 84 42
 
 small_egg_not_being_thrown
-    cmp #small_egg_status_falling                                     ; 426a: c9 32
+    cmp #small_egg_falling_animation - small_egg_animations           ; 426a: c9 32
     bne small_egg_not_falling                                         ; 426c: d0 11
     lda #objectid_small_egg                                           ; 426e: a9 02
     sta temp_bottom_offset                                            ; 4270: 8d 51 25
     lda #2                                                            ; 4273: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
-    beq c4284                                                         ; 4278: f0 0a                   ; branch if not collided with anything
-    ldy #small_egg_status_on_ground                                   ; 427a: a0 01
+    beq set_small_egg_animation_step                                  ; 4278: f0 0a                   ; branch if not collided with anything
+    ldy #small_egg_stationary_animation - small_egg_animations        ; 427a: a0 01
     sty save_game_level_e_small_egg_status                            ; 427c: 8c 13 0a
 small_egg_not_falling
     lda #0                                                            ; 427f: a9 00
     sta level_workspace_small_egg_offscreen_time                      ; 4281: 8d 6f 0a
-c4284
-    sty small_egg_animation_table_index                               ; 4284: 8c 74 0a
-    lda small_egg_animation_table,y                                   ; 4287: b9 99 40
+set_small_egg_animation_step
+    sty small_egg_animation_step                                      ; 4284: 8c 74 0a
+    lda small_egg_animations,y                                        ; 4287: b9 99 40
     sta object_spriteid + objectid_small_egg                          ; 428a: 8d aa 09
 ; get the X offset from the animation table
     iny                                                               ; 428d: c8
-    lda small_egg_animation_table,y                                   ; 428e: b9 99 40
+    lda small_egg_animations,y                                        ; 428e: b9 99 40
     ldx thrown_egg_direction                                          ; 4291: ae 73 0a
     bpl egg_thrown_to_right                                           ; 4294: 10 05
 ; the egg has been thrown left, so negate the X offset from the animation table
@@ -1428,7 +1538,7 @@ adding_positive_value_to_x
 ; Get the Y offset from the animation table and add it to thrown_egg_y_low. This is an
 ; 8-bit value so no need to mess around with high byte.
     iny                                                               ; 42b0: c8
-    lda small_egg_animation_table,y                                   ; 42b1: b9 99 40
+    lda small_egg_animations,y                                        ; 42b1: b9 99 40
     clc                                                               ; 42b4: 18
     adc thrown_egg_y_low                                              ; 42b5: 6d 72 0a
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
@@ -1442,7 +1552,7 @@ adding_positive_value_to_x
     lda object_y_low + objectid_small_egg                             ; 42cf: ad 7e 09
     sta thrown_egg_y_low                                              ; 42d2: 8d 72 0a
     lda save_game_level_e_small_egg_status                            ; 42d5: ad 13 0a
-    cmp #small_egg_status_being_thrown                                ; 42d8: c9 0c
+    cmp #small_egg_thrown_right_animation - small_egg_animations      ; 42d8: c9 0c
     bne return3                                                       ; 42da: d0 40
     ldx #objectid_small_egg                                           ; 42dc: a2 02
     jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
@@ -1673,25 +1783,26 @@ room_1_check_right_exit
     ldy current_level                                                 ; 4447: a4 31
     jmp initialise_level_and_room                                     ; 4449: 4c 40 11
 
-; Table of animations for the egg. There are three bytes per entry. First byte is a
+; Table of animations for the big egg. There are three bytes per entry. First byte is a
 ; sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets,
 ; added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss
 ; of object 3, the egg. Each animation is terminated with an extra zero byte.
 egg_animations_table
     !byte 0                                                           ; 444c: 00
 
+egg_normal_animation
     !byte spriteid_large_egg_upright                                  ; 444d: db
     !byte 0                                                           ; 444e: 00
     !byte 0                                                           ; 444f: 00
     !byte 0                                                           ; 4450: 00                      ; terminator
 
-egg_animation_subseq2
+egg_tilted_animation
     !byte spriteid_large_egg_tilted                                   ; 4451: dc
     !byte 0                                                           ; 4452: 00
     !byte 0                                                           ; 4453: 00
     !byte 0                                                           ; 4454: 00                      ; terminator
 
-egg_animation_subseq1
+egg_falling_off_animation
     !byte spriteid_large_egg_tilted                                   ; 4455: dc
     !byte $f8                                                         ; 4456: f8
     !byte 0                                                           ; 4457: 00
@@ -1706,13 +1817,13 @@ egg_animation_subseq1
     !byte 4                                                           ; 4460: 04
     !byte 0                                                           ; 4461: 00                      ; terminator
 
-egg_animation_subseq3
+egg_falling_straight_down_animation
     !byte spriteid_large_egg_sideways                                 ; 4462: dd
     !byte 0                                                           ; 4463: 00
     !byte 8                                                           ; 4464: 08
     !byte 0                                                           ; 4465: 00                      ; terminator
 
-egg_animation_subseq4
+egg_stationary_animation
     !byte spriteid_large_egg_sideways                                 ; 4466: dd
     !byte 0                                                           ; 4467: 00
     !byte 0                                                           ; 4468: 00
@@ -1729,20 +1840,20 @@ room_1_update_handler
     ldx #$70 ; 'p'                                                    ; 4475: a2 70
     ldy #$58 ; 'X'                                                    ; 4477: a0 58
     lda save_game_level_e_big_egg_animation_index                     ; 4479: ad 14 0a
-    cmp #1                                                            ; 447c: c9 01
-    beq room_1_axy_set                                                ; 447e: f0 13
-    cmp #5                                                            ; 4480: c9 05
-    beq room_1_axy_set                                                ; 4482: f0 0f
+    cmp #egg_normal_animation - egg_animations_table                  ; 447c: c9 01
+    beq room_1_set_egg_animation_and_position                         ; 447e: f0 13
+    cmp #egg_tilted_animation - egg_animations_table                  ; 4480: c9 05
+    beq room_1_set_egg_animation_and_position                         ; 4482: f0 0f
     ora #0                                                            ; 4484: 09 00                   ; set flags based on A
     bne egg_on_floor                                                  ; 4486: d0 05
-    lda #1                                                            ; 4488: a9 01
-    jmp room_1_axy_set                                                ; 448a: 4c 93 44
+    lda #egg_normal_animation - egg_animations_table                  ; 4488: a9 01
+    jmp room_1_set_egg_animation_and_position                         ; 448a: 4c 93 44
 
 egg_on_floor
     ldx #$58 ; 'X'                                                    ; 448d: a2 58
     ldy #$a8                                                          ; 448f: a0 a8
-    lda #egg_animation_subseq4 - egg_animations_table                 ; 4491: a9 1a
-room_1_axy_set
+    lda #egg_stationary_animation - egg_animations_table              ; 4491: a9 1a
+room_1_set_egg_animation_and_position
     sta save_game_level_e_big_egg_animation_index                     ; 4493: 8d 14 0a
     sta egg_animation_index                                           ; 4496: 8d 76 0a
     stx room_1_egg_x                                                  ; 4499: 8e 77 0a
@@ -1754,8 +1865,8 @@ room_1_not_this_room1
     ldx #<envelope2                                                   ; 44a5: a2 ee
     ldy #>envelope2                                                   ; 44a7: a0 45
     jsr define_envelope                                               ; 44a9: 20 5e 39
-    lda #$de                                                          ; 44ac: a9 de
-    sta envelope_1_pitch_change_per_step_section_2                    ; 44ae: 8d af 38
+    lda #spriteid_cache2                                              ; 44ac: a9 de
+    sta object_erase_type + objectid_egg                              ; 44ae: 8d af 38
     lda #0                                                            ; 44b1: a9 00
     sta object_x_high + objectid_egg                                  ; 44b3: 8d 69 09
     sta object_y_high + objectid_egg                                  ; 44b6: 8d 95 09
@@ -1772,11 +1883,11 @@ room_1_not_first_update
     ldy save_game_level_e_big_egg_animation_index                     ; 44c8: ac 14 0a
 not_end_of_egg_animation_sequence
     lda save_game_level_e_big_egg_animation_index                     ; 44cb: ad 14 0a
-    cmp #1                                                            ; 44ce: c9 01
+    cmp #egg_normal_animation - egg_animations_table                  ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
     jsr test_if_small_egg_hit_large_egg                               ; 44d2: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44d5: f0 61
-    ldy #egg_animation_subseq2 - egg_animations_table                 ; 44d7: a0 05
+    ldy #egg_tilted_animation - egg_animations_table                  ; 44d7: a0 05
     sty save_game_level_e_big_egg_animation_index                     ; 44d9: 8c 14 0a
     jmp new_egg_animation_index_in_y                                  ; 44dc: 4c 38 45
 
@@ -1798,9 +1909,9 @@ c44df
     sta height_in_cells                                               ; 44fc: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
 room_1_not_this_room3
-    lda #egg_animation_subseq3 - egg_animations_table                 ; 4501: a9 16
+    lda #egg_falling_straight_down_animation - egg_animations_table   ; 4501: a9 16
     sta save_game_level_e_big_egg_animation_index                     ; 4503: 8d 14 0a
-    ldy #egg_animation_subseq1 - egg_animations_table                 ; 4506: a0 09
+    ldy #egg_falling_off_animation - egg_animations_table             ; 4506: a0 09
     jmp new_egg_animation_index_in_y                                  ; 4508: 4c 38 45
 
 c450b
@@ -1820,19 +1931,21 @@ c450b
     ldx #<sound3                                                      ; 4527: a2 fc
     ldy #>sound3                                                      ; 4529: a0 45
     jsr play_sound_yx                                                 ; 452b: 20 f6 38
-    ldy #egg_animation_subseq3 - egg_animations_table                 ; 452e: a0 16
+    ldy #egg_falling_straight_down_animation - egg_animations_table   ; 452e: a0 16
     jmp new_egg_animation_index_in_y                                  ; 4530: 4c 38 45
 
 c4533
-    ldy #egg_animation_subseq4 - egg_animations_table                 ; 4533: a0 1a
+    ldy #egg_stationary_animation - egg_animations_table              ; 4533: a0 1a
     sty save_game_level_e_big_egg_animation_index                     ; 4535: 8c 14 0a
 new_egg_animation_index_in_y
     sty egg_animation_index                                           ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
+; add animation x offset to egg x position
     lda egg_animations_table,y                                        ; 453c: b9 4c 44
     clc                                                               ; 453f: 18
     adc room_1_egg_x                                                  ; 4540: 6d 77 0a
     sta room_1_egg_x                                                  ; 4543: 8d 77 0a
+; add animation y offset to egg y position
     iny                                                               ; 4546: c8
     lda egg_animations_table,y                                        ; 4547: b9 4c 44
     clc                                                               ; 454a: 18
@@ -1858,9 +1971,9 @@ finish_setting_up_egg
     lda #2                                                            ; 4578: a9 02
     sta height_in_cells                                               ; 457a: 85 3d
     lda save_game_level_e_big_egg_animation_index                     ; 457c: ad 14 0a
-    cmp #1                                                            ; 457f: c9 01
+    cmp #egg_normal_animation - egg_animations_table                  ; 457f: c9 01
     beq c4596                                                         ; 4581: f0 13
-    cmp #5                                                            ; 4583: c9 05
+    cmp #egg_tilted_animation - egg_animations_table                  ; 4583: c9 05
     beq c4596                                                         ; 4585: f0 0f
     ldx #$0b                                                          ; 4587: a2 0b
     ldy #$15                                                          ; 4589: a0 15
@@ -1885,7 +1998,7 @@ test_if_small_egg_hit_large_egg
     lda room_containing_small_egg                                     ; 45a6: ad 75 0a
     cmp #1                                                            ; 45a9: c9 01
     bne load_a_and_return                                             ; 45ab: d0 25
-; TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x
+; Why not lda object_spriteid+2? And similarly for following lda abs,x
     ldx #objectid_small_egg                                           ; 45ad: a2 02
     lda object_spriteid,x                                             ; 45af: bd a8 09
     beq load_a_and_return                                             ; 45b2: f0 1e
@@ -1954,8 +2067,8 @@ sound2
     !word 0                                                           ; 4606: 00 00                   ; amplitude
     !word 210                                                         ; 4608: d2 00                   ; pitch
     !word 1                                                           ; 460a: 01 00                   ; duration
-source_sprite_data
 ground_fill_2x2_top_left
+source_sprite_data
     !byte %..#.....                                                   ; 460c: 20
     !byte %...#....                                                   ; 460d: 10
     !byte %#..#....                                                   ; 460e: 90
@@ -1997,7 +2110,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3d12
 ;     c3d34
-;     c3d37
 ;     c3d64
 ;     c3d6f
 ;     c3d85
@@ -2030,7 +2142,6 @@ pydis_end
 ;     c420c
 ;     c4219
 ;     c4240
-;     c4284
 ;     c4302
 ;     c4317
 ;     c4359
@@ -2041,22 +2152,11 @@ pydis_end
 ;     c4533
 ;     c4596
 ;     l0023
-;     l09d4
 ;     l0a79
-;     l2200
-;     l2248
-;     l22ed
-;     l22ee
-;     l23c4
-;     l38ae
-;     l38b1
-;     l38c4
-;     l38c7
 ;     l3ac7
 ;     l3ac9
 ;     l3aca
 ;     l3acb
-;     l3b46
 ;     l4389
 ;     l438a
 ;     l438b
@@ -2067,6 +2167,9 @@ pydis_end
 !if (<envelope2) != $ee {
     !error "Assertion failed: <envelope2 == $ee"
 }
+!if (<ground_fill_2x2_top_left) != $0c {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $0c"
+}
 !if (<sound1) != $e6 {
     !error "Assertion failed: <sound1 == $e6"
 }
@@ -2075,9 +2178,6 @@ pydis_end
 }
 !if (<sound3) != $fc {
     !error "Assertion failed: <sound3 == $fc"
-}
-!if (<source_sprite_data) != $0c {
-    !error "Assertion failed: <source_sprite_data == $0c"
 }
 !if (<update_bird) != $b8 {
     !error "Assertion failed: <update_bird == $b8"
@@ -2088,6 +2188,9 @@ pydis_end
 !if (>envelope2) != $45 {
     !error "Assertion failed: >envelope2 == $45"
 }
+!if (>ground_fill_2x2_top_left) != $46 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $46"
+}
 !if (>sound1) != $45 {
     !error "Assertion failed: >sound1 == $45"
 }
@@ -2097,11 +2200,14 @@ pydis_end
 !if (>sound3) != $45 {
     !error "Assertion failed: >sound3 == $45"
 }
-!if (>source_sprite_data) != $46 {
-    !error "Assertion failed: >source_sprite_data == $46"
-}
 !if (>update_bird) != $3e {
     !error "Assertion failed: >update_bird == $3e"
+}
+!if (bird_max_global_x_position) != $74 {
+    !error "Assertion failed: bird_max_global_x_position == $74"
+}
+!if (bird_min_global_x_position) != $1e {
+    !error "Assertion failed: bird_min_global_x_position == $1e"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -2109,23 +2215,20 @@ pydis_end
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
 }
-!if (duck_max_global_x_position) != $74 {
-    !error "Assertion failed: duck_max_global_x_position == $74"
+!if (egg_falling_off_animation - egg_animations_table) != $09 {
+    !error "Assertion failed: egg_falling_off_animation - egg_animations_table == $09"
 }
-!if (duck_min_global_x_position) != $1e {
-    !error "Assertion failed: duck_min_global_x_position == $1e"
+!if (egg_falling_straight_down_animation - egg_animations_table) != $16 {
+    !error "Assertion failed: egg_falling_straight_down_animation - egg_animations_table == $16"
 }
-!if (egg_animation_subseq1 - egg_animations_table) != $09 {
-    !error "Assertion failed: egg_animation_subseq1 - egg_animations_table == $09"
+!if (egg_normal_animation - egg_animations_table) != $01 {
+    !error "Assertion failed: egg_normal_animation - egg_animations_table == $01"
 }
-!if (egg_animation_subseq2 - egg_animations_table) != $05 {
-    !error "Assertion failed: egg_animation_subseq2 - egg_animations_table == $05"
+!if (egg_stationary_animation - egg_animations_table) != $1a {
+    !error "Assertion failed: egg_stationary_animation - egg_animations_table == $1a"
 }
-!if (egg_animation_subseq3 - egg_animations_table) != $16 {
-    !error "Assertion failed: egg_animation_subseq3 - egg_animations_table == $16"
-}
-!if (egg_animation_subseq4 - egg_animations_table) != $1a {
-    !error "Assertion failed: egg_animation_subseq4 - egg_animations_table == $1a"
+!if (egg_tilted_animation - egg_animations_table) != $05 {
+    !error "Assertion failed: egg_tilted_animation - egg_animations_table == $05"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
@@ -2154,20 +2257,29 @@ pydis_end
 !if (level_specific_update) != $3b34 {
     !error "Assertion failed: level_specific_update == $3b34"
 }
-!if (object_direction + 4) != $09c2 {
-    !error "Assertion failed: object_direction + 4 == $09c2"
+!if (object_direction + objectid_bird) != $09c2 {
+    !error "Assertion failed: object_direction + objectid_bird == $09c2"
 }
-!if (object_direction + 5) != $09c3 {
-    !error "Assertion failed: object_direction + 5 == $09c3"
+!if (object_direction + objectid_bird_wings) != $09c3 {
+    !error "Assertion failed: object_direction + objectid_bird_wings == $09c3"
 }
 !if (object_direction + objectid_small_egg) != $09c0 {
     !error "Assertion failed: object_direction + objectid_small_egg == $09c0"
 }
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
+!if (object_erase_type + objectid_bird_wings) != $38b1 {
+    !error "Assertion failed: object_erase_type + objectid_bird_wings == $38b1"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
+!if (object_erase_type + objectid_egg) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_egg == $38af"
+}
+!if (object_erase_type + objectid_small_egg) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_small_egg == $38ae"
+}
+!if (object_spriteid + objectid_bird) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_bird == $09ac"
+}
+!if (object_spriteid + objectid_bird_wings) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_bird_wings == $09ad"
 }
 !if (object_spriteid + objectid_egg) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_egg == $09ab"
@@ -2178,11 +2290,11 @@ pydis_end
 !if (object_spriteid_old + objectid_small_egg) != $09b5 {
     !error "Assertion failed: object_spriteid_old + objectid_small_egg == $09b5"
 }
-!if (object_x_high + 4) != $096a {
-    !error "Assertion failed: object_x_high + 4 == $096a"
+!if (object_x_high + objectid_bird) != $096a {
+    !error "Assertion failed: object_x_high + objectid_bird == $096a"
 }
-!if (object_x_high + 5) != $096b {
-    !error "Assertion failed: object_x_high + 5 == $096b"
+!if (object_x_high + objectid_bird_wings) != $096b {
+    !error "Assertion failed: object_x_high + objectid_bird_wings == $096b"
 }
 !if (object_x_high + objectid_egg) != $0969 {
     !error "Assertion failed: object_x_high + objectid_egg == $0969"
@@ -2193,11 +2305,11 @@ pydis_end
 !if (object_x_high_old + objectid_small_egg) != $0973 {
     !error "Assertion failed: object_x_high_old + objectid_small_egg == $0973"
 }
-!if (object_x_low + 4) != $0954 {
-    !error "Assertion failed: object_x_low + 4 == $0954"
+!if (object_x_low + objectid_bird) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_bird == $0954"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_x_low + objectid_bird_wings) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_bird_wings == $0955"
 }
 !if (object_x_low + objectid_egg) != $0953 {
     !error "Assertion failed: object_x_low + objectid_egg == $0953"
@@ -2208,11 +2320,11 @@ pydis_end
 !if (object_x_low_old + objectid_small_egg) != $095d {
     !error "Assertion failed: object_x_low_old + objectid_small_egg == $095d"
 }
-!if (object_y_high + 4) != $0996 {
-    !error "Assertion failed: object_y_high + 4 == $0996"
+!if (object_y_high + objectid_bird) != $0996 {
+    !error "Assertion failed: object_y_high + objectid_bird == $0996"
 }
-!if (object_y_high + 5) != $0997 {
-    !error "Assertion failed: object_y_high + 5 == $0997"
+!if (object_y_high + objectid_bird_wings) != $0997 {
+    !error "Assertion failed: object_y_high + objectid_bird_wings == $0997"
 }
 !if (object_y_high + objectid_egg) != $0995 {
     !error "Assertion failed: object_y_high + objectid_egg == $0995"
@@ -2220,11 +2332,11 @@ pydis_end
 !if (object_y_high + objectid_small_egg) != $0994 {
     !error "Assertion failed: object_y_high + objectid_small_egg == $0994"
 }
-!if (object_y_low + 4) != $0980 {
-    !error "Assertion failed: object_y_low + 4 == $0980"
+!if (object_y_low + objectid_bird) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_bird == $0980"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_y_low + objectid_bird_wings) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_bird_wings == $0981"
 }
 !if (object_y_low + objectid_egg) != $097f {
     !error "Assertion failed: object_y_low + objectid_egg == $097f"
@@ -2234,6 +2346,12 @@ pydis_end
 }
 !if (object_y_low_old + objectid_small_egg) != $0989 {
     !error "Assertion failed: object_y_low_old + objectid_small_egg == $0989"
+}
+!if (object_z_order + objectid_bird_wings) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_bird_wings == $38c7"
+}
+!if (object_z_order + objectid_small_egg) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_small_egg == $38c4"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -2253,41 +2371,86 @@ pydis_end
 !if (room_3_data) != $3df7 {
     !error "Assertion failed: room_3_data == $3df7"
 }
-!if (small_egg_animation_table_subseq1 - small_egg_animation_table) != $05 {
-    !error "Assertion failed: small_egg_animation_table_subseq1 - small_egg_animation_table == $05"
+!if (small_egg_falling_animation - small_egg_animations) != $32 {
+    !error "Assertion failed: small_egg_falling_animation - small_egg_animations == $32"
 }
-!if (small_egg_status_being_thrown) != $0c {
-    !error "Assertion failed: small_egg_status_being_thrown == $0c"
+!if (small_egg_start_throwing_animation - small_egg_animations) != $05 {
+    !error "Assertion failed: small_egg_start_throwing_animation - small_egg_animations == $05"
+}
+!if (small_egg_stationary_animation - small_egg_animations) != $01 {
+    !error "Assertion failed: small_egg_stationary_animation - small_egg_animations == $01"
 }
 !if (small_egg_status_collected) != $ff {
     !error "Assertion failed: small_egg_status_collected == $ff"
 }
-!if (small_egg_status_falling) != $32 {
-    !error "Assertion failed: small_egg_status_falling == $32"
+!if (small_egg_thrown_left_animation - small_egg_animations) != $25 {
+    !error "Assertion failed: small_egg_thrown_left_animation - small_egg_animations == $25"
 }
-!if (small_egg_status_on_ground) != $01 {
-    !error "Assertion failed: small_egg_status_on_ground == $01"
+!if (small_egg_thrown_right_animation - small_egg_animations) != $0c {
+    !error "Assertion failed: small_egg_thrown_right_animation - small_egg_animations == $0c"
 }
 !if (sprite_data - level_data) != $0b57 {
     !error "Assertion failed: sprite_data - level_data == $0b57"
 }
-!if (spriteid_duck_toolbar) != $d1 {
-    !error "Assertion failed: spriteid_duck_toolbar == $d1"
+!if (spriteid_bird_1) != $c8 {
+    !error "Assertion failed: spriteid_bird_1 == $c8"
 }
-!if (spriteid_duck_wing_1) != $ce {
-    !error "Assertion failed: spriteid_duck_wing_1 == $ce"
+!if (spriteid_bird_2) != $c9 {
+    !error "Assertion failed: spriteid_bird_2 == $c9"
 }
-!if (spriteid_duck_wing_2) != $cf {
-    !error "Assertion failed: spriteid_duck_wing_2 == $cf"
+!if (spriteid_bird_3) != $ca {
+    !error "Assertion failed: spriteid_bird_3 == $ca"
 }
-!if (spriteid_duck_wing_3) != $d0 {
-    !error "Assertion failed: spriteid_duck_wing_3 == $d0"
+!if (spriteid_bird_toolbar) != $d1 {
+    !error "Assertion failed: spriteid_bird_toolbar == $d1"
+}
+!if (spriteid_bird_transform_1) != $cc {
+    !error "Assertion failed: spriteid_bird_transform_1 == $cc"
+}
+!if (spriteid_bird_transform_2) != $cd {
+    !error "Assertion failed: spriteid_bird_transform_2 == $cd"
+}
+!if (spriteid_bird_wing_1) != $ce {
+    !error "Assertion failed: spriteid_bird_wing_1 == $ce"
+}
+!if (spriteid_bird_wing_2) != $cf {
+    !error "Assertion failed: spriteid_bird_wing_2 == $cf"
+}
+!if (spriteid_bird_wing_3) != $d0 {
+    !error "Assertion failed: spriteid_bird_wing_3 == $d0"
+}
+!if (spriteid_cache1) != $d6 {
+    !error "Assertion failed: spriteid_cache1 == $d6"
+}
+!if (spriteid_cache2) != $de {
+    !error "Assertion failed: spriteid_cache2 == $de"
+}
+!if (spriteid_cache3) != $df {
+    !error "Assertion failed: spriteid_cache3 == $df"
 }
 !if (spriteid_egg) != $d2 {
     !error "Assertion failed: spriteid_egg == $d2"
 }
 !if (spriteid_egg_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_toolbar == $d3"
+}
+!if (spriteid_icodata_cat) != $05 {
+    !error "Assertion failed: spriteid_icodata_cat == $05"
+}
+!if (spriteid_icodata_disc) != $03 {
+    !error "Assertion failed: spriteid_icodata_disc == $03"
+}
+!if (spriteid_icodata_info) != $07 {
+    !error "Assertion failed: spriteid_icodata_info == $07"
+}
+!if (spriteid_icodata_sound) != $02 {
+    !error "Assertion failed: spriteid_icodata_sound == $02"
+}
+!if (spriteid_icodata_wizard) != $04 {
+    !error "Assertion failed: spriteid_icodata_wizard == $04"
+}
+!if (spriteid_icon_background) != $01 {
+    !error "Assertion failed: spriteid_icon_background == $01"
 }
 !if (spriteid_large_egg_sideways) != $dd {
     !error "Assertion failed: spriteid_large_egg_sideways == $dd"

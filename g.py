@@ -1678,7 +1678,7 @@ On Exit:
     label(0x21ef, "player_state_unchanged")
     label(0x21ff, "return9")
 
-    entry(0x2200, "set_player_spriteid_and_offset_from_animation_table")
+    label(0x2200, "set_player_spriteid_and_offset_from_animation_table")
     comment(0x2200, "store YX as animation table address", inline=True)
     comment(0x2204, "load byte at offset A from table, the spriteid")
     comment(0x220a, "check if we should add offset x")
@@ -1701,7 +1701,7 @@ On Entry:
                        if top bit set, lower 7 bits are the offset into sprite array
                    YX: Address of main sprite list
     animation_address: accessory sprite list""")
-    entry(0x2248, "update_player_accessory_object_animation")
+    label(0x2248, "update_player_accessory_object_animation")
     comment(0x225b, "check for end of animation (loop if needed)")
     label(0x2267, "store_accessory_object_state")
     comment(0x2276, "add animation XY offset to player object position (inverted if looking left)")
@@ -1743,7 +1743,7 @@ On Entry:
 On Exit:
     Y: set to the current offset of player animation
     A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise""")
-    entry(0x22ee, "set_base_animation_address_and_handle_transform_in_out")
+    label(0x22ee, "set_base_animation_address_and_handle_transform_in_out")
     comment(0x22f2, "read next entry in animation")
     comment(0x22f9, "branch if not at the end of the animation")
     comment(0x22fb, "restart the animation")
@@ -2961,7 +2961,7 @@ On Exit:
     label(0x3975, "mid_transform_circle_sprites")
     label(0x3978, "mid_transform_sparkles_in")
     label(0x397f, "mid_transform_sparkles_out")
-    comment(0x3986, "During a transformation, 'object_current_index_in_animation' is the index into the sprite array above and ")
+    comment(0x3986, "During a transformation, 'object_current_index_in_animation' is the index into the sprite array above")
     label(0x3986, "update_mid_transformation")
     label(0x3997, "still_playing")
     expr(0x39a6, "mid_transform_sparkles_out - mid_transform_sprites_table")
@@ -3347,7 +3347,7 @@ emessage(0x3606)
 emessage(0x3655)
 emessage(0x37b1)
 
-# TODO: Temp reference code for EOR-decrypting in Python:
+# NOTE: Temp reference code for EOR-decrypting in Python:
 # s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
 
