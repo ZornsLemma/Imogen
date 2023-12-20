@@ -47,7 +47,7 @@ buffer_sound_channel_0                          = 4
 bytes_per_cell                                  = 8
 bytes_per_character_row                         = 320
 caps_mask                                       = 223
-cells_per_line                                  = 40
+cells_per_character_row                         = 40
 collision_map_length                            = 240
 collision_map_none                              = 0
 collision_map_out_of_bounds                     = 255
@@ -137,7 +137,6 @@ sprite_op_flags_copy_screen                     = 1
 sprite_op_flags_erase_to_bg_colour              = 2
 sprite_op_flags_erase_to_fg_colour              = 4
 sprite_op_flags_normal                          = 0
-spriteid_197                                    = 197
 spriteid_ball                                   = 59
 spriteid_brazier                                = 58
 spriteid_cat1                                   = 27
@@ -169,6 +168,7 @@ spriteid_diamond4                               = 42
 spriteid_diamond5                               = 43
 spriteid_erase_player                           = 199
 spriteid_erase_player_accessory                 = 198
+spriteid_erase_sparkles                         = 197
 spriteid_fingertip_tile_restoration             = 30
 spriteid_fire1                                  = 60
 spriteid_fire2                                  = 61
@@ -969,7 +969,7 @@ get_address_of_sprite_a
     beq return2                                                       ; 146b: f0 3a       .:  :133a[1]
     ldx #<sprite_197                                                  ; 146d: a2 c5       ..  :133c[1]
     ldy #>sprite_197                                                  ; 146f: a0 0b       ..  :133e[1]
-    cmp #spriteid_197                                                 ; 1471: c9 c5       ..  :1340[1]
+    cmp #spriteid_erase_sparkles                                      ; 1471: c9 c5       ..  :1340[1]
     beq return2                                                       ; 1473: f0 32       .2  :1342[1]
     ldx sprdata_ptr                                                   ; 1475: a6 54       .T  :1344[1]
     ldy sprdata_ptr + 1                                               ; 1477: a4 55       .U  :1346[1]
@@ -1312,7 +1312,7 @@ byte_not_finished_yet2
     bpl draw_sprite2                                                  ; 1614: 10 32       .2  :14e3[1]
     inc sprite_cell_x_pos                                             ; 1616: e6 85       ..  :14e5[1]
     ldy sprite_cell_x_pos                                             ; 1618: a4 85       ..  :14e7[1]
-    cpy #cells_per_line                                               ; 161a: c0 28       .(  :14e9[1]
+    cpy #cells_per_character_row                                      ; 161a: c0 28       .(  :14e9[1]
     bcs finish_off_sprite2                                            ; 161c: b0 3c       .<  :14eb[1]
     ldy #7                                                            ; 161e: a0 07       ..  :14ed[1]
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
@@ -1484,7 +1484,7 @@ found_second_bit_set
     inc sprite_cell_x_pos                                             ; 170b: e6 85       ..  :15da[1]
     ldy sprite_cell_x_pos                                             ; 170d: a4 85       ..  :15dc[1]
 ; if we reach the right hand edge of the screen then we are done
-    cpy #cells_per_line                                               ; 170f: c0 28       .(  :15de[1]
+    cpy #cells_per_character_row                                      ; 170f: c0 28       .(  :15de[1]
     bcs finish_off_sprite                                             ; 1711: b0 3c       .<  :15e0[1]
 ; move sprite addresses on by eight to get to next cell column
     ldy #7                                                            ; 1713: a0 07       ..  :15e2[1]   ; reset to start of (i.e. bit 7 of) next byte
@@ -1564,7 +1564,7 @@ clamp_x
     lda sprite_cell_x_pos                                             ; 1784: a5 85       ..  :1653[1]
     bmi sprite_clamp_x_left                                           ; 1786: 30 07       0.  :1655[1]
 ; if fully off screen to the right, then pull values and return else just return
-    cmp #cells_per_line                                               ; 1788: c9 28       .(  :1657[1]
+    cmp #cells_per_character_row                                      ; 1788: c9 28       .(  :1657[1]
     bcc return3                                                       ; 178a: 90 72       .r  :1659[1]
     jmp pull_values_and_exit_sprite_op                                ; 178c: 4c ce 16    L.. :165b[1]
 
@@ -1582,7 +1582,7 @@ sprite_clamp_x_left
 sprite_clamp_x_right
     lda sprite_cell_x_pos                                             ; 17a1: a5 85       ..  :1670[1]
     bmi pull_values_and_exit_sprite_op                                ; 17a3: 30 5a       0Z  :1672[1]
-    cmp #cells_per_line                                               ; 17a5: c9 28       .(  :1674[1]
+    cmp #cells_per_character_row                                      ; 17a5: c9 28       .(  :1674[1]
     bcc return3                                                       ; 17a7: 90 55       .U  :1676[1]
     lda sprite_x_pos_low                                              ; 17a9: a5 74       .t  :1678[1]
     sbc #<(screen_width_in_pixels-1)                                  ; 17ab: e9 3f       .?  :167a[1]
@@ -1592,7 +1592,7 @@ sprite_clamp_x_right
     sta sprite_x_pos_low                                              ; 17b1: 85 74       .t  :1680[1]
     lda #>(screen_width_in_pixels-1)                                  ; 17b3: a9 01       ..  :1682[1]
     sta sprite_x_pos_high                                             ; 17b5: 85 75       .u  :1684[1]
-    lda #cells_per_line-1                                             ; 17b7: a9 27       .'  :1686[1]
+    lda #cells_per_character_row-1                                    ; 17b7: a9 27       .'  :1686[1]
     sta sprite_cell_x_pos                                             ; 17b9: 85 85       ..  :1688[1]
 sprite_clip_x
     lda amount_sprite_is_offscreen_x                                  ; 17bb: a5 86       ..  :168a[1]
@@ -1729,6 +1729,7 @@ no_disk_error
     lda error_code_on_brk                                             ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
+; 'Disk error[0d]' EOR-encrypted with $cb
 disk_error_encrypted_string
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
 pending_toolbar_colour
@@ -1774,6 +1775,7 @@ wait_for_vsync
     lda #osbyte_vsync                                                 ; 18bd: a9 13       ..  :178c[1]
     jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
 
+; wait for vsync timer to help avoid flicker
 wait_for_timer_2_using_yx
     txa                                                               ; 18c2: 8a          .   :1791[1]
     clc                                                               ; 18c3: 18          .   :1792[1]
@@ -2278,9 +2280,9 @@ update_level_completion
     jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
 skip_adding_level_completion_spell
     ldx remember_obj_index                                            ; 1b8a: ae ae 1a    ... :1a59[1]
-    lda #spriteid_197                                                 ; 1b8d: a9 c5       ..  :1a5c[1]
+    lda #spriteid_erase_sparkles                                      ; 1b8d: a9 c5       ..  :1a5c[1]
     sta object_erase_type,x                                           ; 1b8f: 9d ac 38    ..8 :1a5e[1]
-    lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
+    lda #spriteid_one_pixel_masked_out                                ; 1b92: a9 00       ..  :1a61[1]
     sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
 ; exit if level is completed
     lda current_level                                                 ; 1b97: a5 31       .1  :1a66[1]
@@ -2458,11 +2460,11 @@ all_cells_in_row_copied
     beq now_write_to_collision_map                                    ; 1c76: f0 12       ..  :1b45[1]
 ; Advance first_cell_in_row_screen_address by one row and reset cell_screen_address
     lda first_cell_in_row_screen_address_low                          ; 1c78: a5 74       .t  :1b47[1]
-    adc #<(cells_per_line * rows_per_cell)                            ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
+    adc #<(cells_per_character_row * rows_per_cell)                   ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
     sta first_cell_in_row_screen_address_low                          ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda first_cell_in_row_screen_address_high                         ; 1c80: a5 75       .u  :1b4f[1]
-    adc #>(cells_per_line * rows_per_cell)                            ; 1c82: 69 01       i.  :1b51[1]
+    adc #>(cells_per_character_row * rows_per_cell)                   ; 1c82: 69 01       i.  :1b51[1]
     sta first_cell_in_row_screen_address_high                         ; 1c84: 85 75       .u  :1b53[1]
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; ALWAYS branch
@@ -5647,7 +5649,8 @@ skip_developer_shift_key_handling
 
 shift_key_detected
     jsr read_player_movement_keys                                     ; 2bee: 20 a2 3a     .: :2abd[1]
-    ldx #$80                                                          ; 2bf1: a2 80       ..  :2ac0[1]   ; wait for a bit
+; wait for a bit to slow down the gameplay/animation for debugging purposes
+    ldx #$80                                                          ; 2bf1: a2 80       ..  :2ac0[1]
     ldy #0                                                            ; 2bf3: a0 00       ..  :2ac2[1]
 delay_loop1
     dey                                                               ; 2bf5: 88          .   :2ac4[1]
@@ -5741,7 +5744,8 @@ check_if_player_character_menu_item_chosen
     beq return21                                                      ; 2c88: f0 0b       ..  :2b57[1]
 ; reduce number of transformations left and execute transformation
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
-    bcc return21                                                      ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
+; branch if zero transformations were remaining before attempted decrement
+    bcc return21                                                      ; 2c8d: 90 06       ..  :2b5c[1]
     jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
     jsr transform                                                     ; 2c92: 20 37 23     7# :2b61[1]
 return21
@@ -5752,7 +5756,7 @@ check_for_extra_menu_item_chosen
     cpx menu_index_for_extra_items                                    ; 2c98: ec 6e 29    .n) :2b67[1]
     bcc return22                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
     lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
-    cmp #4                                                            ; 2c9f: c9 04       ..  :2b6e[1]
+    cmp #spriteid_icodata_wizard                                      ; 2c9f: c9 04       ..  :2b6e[1]
     bne return22                                                      ; 2ca1: d0 14       ..  :2b70[1]
     cmp new_player_character                                          ; 2ca3: c5 4d       .M  :2b72[1]
     bne return22                                                      ; 2ca5: d0 10       ..  :2b74[1]
@@ -5907,9 +5911,8 @@ plot_menu_item
     tya                                                               ; 2d40: 98          .   :2c0f[1]
     pha                                                               ; 2d41: 48          H   :2c10[1]
 ; Save the current screen_base_address_high so we can temporarily set it to $58 to plot
-; the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do
-; we really not know what the old value was? I'd have naively thought we could just do
-; lda #blah:sta screen_base_address_high at the end of this routine?
+; the menu icon. This just saving the old value because it's tidy/safe. We could just
+; do lda #blah:sta screen_base_address_high at the end of this routine.
     lda screen_base_address_high                                      ; 2d42: a5 4c       .L  :2c11[1]
     pha                                                               ; 2d44: 48          H   :2c13[1]
     lda #>toolbar_screen_address                                      ; 2d45: a9 58       .X  :2c14[1]
@@ -6281,7 +6284,7 @@ wizard_got_index_in_animation
     lda wizard_base_animation,y                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr update_player_accessory_including_toolbar                     ; 2fa5: 20 b8 2e     .. :2e74[1]
-    lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
+    lda #objectid_player                                              ; 2fa8: a9 00       ..  :2e77[1]
     jsr update_object_a_solid_rock_collision                          ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta temp_collision_results                                        ; 2fb0: 8d b5 2e    ... :2e7f[1]
@@ -6293,7 +6296,7 @@ wizard_skip_holding_object_handling
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
     jsr update_player_accessory_including_toolbar                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
 ; update collision
-    lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
+    lda #objectid_player                                              ; 2fc0: a9 00       ..  :2e8f[1]
     jsr update_object_a_solid_rock_collision                          ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
@@ -6589,7 +6592,7 @@ cat_got_index_in_animation
     ldx #<cat_base_animation                                          ; 31da: a2 16       ..  :30a9[1]
     ldy #>cat_base_animation                                          ; 31dc: a0 2f       ./  :30ab[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
-    lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
+    lda #objectid_player                                              ; 31e1: a9 00       ..  :30b0[1]
     jsr update_object_a_solid_rock_collision                          ; 31e3: 20 f5 25     .% :30b2[1]
 ; update cat tail
     lda #<cat_tail_spriteids                                          ; 31e6: a9 f7       ..  :30b5[1]
@@ -6941,7 +6944,7 @@ monkey_got_index_in_animation
     ldx #<monkey_base_animation                                       ; 346b: a2 ff       ..  :333a[1]
     ldy #>monkey_base_animation                                       ; 346d: a0 30       .0  :333c[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
-    lda #0                                                            ; 3472: a9 00       ..  :3341[1]
+    lda #objectid_player                                              ; 3472: a9 00       ..  :3341[1]
     jsr update_object_a_solid_rock_collision                          ; 3474: 20 f5 25     .% :3343[1]
 ; start updating the tail
     lda #<monkey_tail_spriteids                                       ; 3477: a9 dd       ..  :3346[1]
@@ -7100,11 +7103,11 @@ show_load_save_dialog
 remove_dialog_local1
     jmp remove_dialog                                                 ; 3559: 4c 53 04    LS. :3428[1]
 
-; 'Press S to save\r' EOR-encrypted with $cb
+; 'Press S to save[0d]' EOR-encrypted with $cb
 press_s_to_save_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $98, $eb, $bf, $a4, $eb, $b8  ; 355c: 9b b9 ae... ... :342b[1]
     !byte $aa, $bd, $ae, $c6                                          ; 3568: aa bd ae... ... :3437[1]
-; 'Press L to load\r' EOR-encrypted with $cb
+; 'Press L to load[0d]' EOR-encrypted with $cb
 press_l_to_load_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb, $bf, $a4, $eb, $a7  ; 356c: 9b b9 ae... ... :343b[1]
     !byte $a4, $aa, $af, $c6                                          ; 3578: a4 aa af... ... :3447[1]
@@ -7154,6 +7157,7 @@ return23
 
 osfile_action_load_or_save
     !byte 0                                                           ; 35c8: 00          .   :3497[1]
+; 'Enter filename[0d]' EOR-encrypted with $cb
 enter_filename_encrypted_string
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5, $aa  ; 35c9: 8e a5 bf... ... :3498[1]
     !byte $a6, $ae, $c6                                               ; 35d5: a6 ae c6    ... :34a4[1]
@@ -7188,11 +7192,11 @@ save_drive_number
     !text "0.I."                                                      ; 3608: 30 2e 49... 0.I :34d7[1]
 save_leaf_filename
     !text ".......", $0d                                              ; 360c: 2e 2e 2e... ... :34db[1]
-; 'Which drive?\r' EOR-encrypted with $cb
+; 'Which drive?[0d]' EOR-encrypted with $cb
 which_drive_encrypted_string
     !byte $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae, $f4  ; 3614: 9c a3 a2... ... :34e3[1]
     !byte $c6                                                         ; 3620: c6          .   :34ef[1]
-; 'Press 0,1,2 or 3\r' EOR-encrypted with $cb
+; 'Press 0,1,2 or 3[0d]' EOR-encrypted with $cb
 press_012_or_3_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb  ; 3621: 9b b9 ae... ... :34f0[1]
     !byte $a4, $b9, $eb, $f8, $c6                                     ; 362d: a4 b9 eb... ... :34fc[1]
@@ -7226,9 +7230,11 @@ drive_number_pressed
 return24
     rts                                                               ; 3665: 60          `   :3534[1]
 
+; 'Insert save disk[0d]' EOR-encrypted with $cb
 insert_save_disk_encrypted_string
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $b8, $aa, $bd, $ae, $eb  ; 3666: 82 a5 b8... ... :3535[1]
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3672: af a2 b8... ... :3541[1]
+; 'and press RETURN[0d]' EOR-encrypted with $cb
 and_press_return_encrypted_string
     !byte $aa, $a5, $af, $eb, $bb, $b9, $ae, $b8, $b8, $eb, $99, $8e  ; 3677: aa a5 af... ... :3546[1]
     !byte $9f, $9e, $99, $85, $c6                                     ; 3683: 9f 9e 99... ... :3552[1]
@@ -7316,10 +7322,13 @@ drive_chosen
     lda save_game                                                     ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
+; 'Saving[0d]' EOR-encrypted with $cb
 saving_encrypted_string
     !byte $98, $aa, $bd, $a2, $a5, $ac, $c6                           ; 3728: 98 aa bd... ... :35f7[1]
+; 'Loading[0d]' EOR-encrypted with $cb
 loading_encrypted_string
     !byte $87, $a4, $aa, $af, $a2, $a5, $ac, $c6                      ; 372f: 87 a4 aa... ... :35fe[1]
+; 'Insert game disk[0d]' EOR-encrypted with $cb
 insert_game_disk_encrypted_string
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa, $a6, $ae, $eb  ; 3737: 82 a5 b8... ... :3606[1]
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
@@ -7358,6 +7367,7 @@ show_password_entry_dialog_ready
 remove_dialog_local3
     jmp remove_dialog                                                 ; 3783: 4c 53 04    LS. :3652[1]
 
+; 'Enter password[0d]' EOR-encrypted with $cb
 enter_password_encrypted_string
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $bb, $aa, $b8, $b8, $bc, $a4  ; 3786: 8e a5 bf... ... :3655[1]
     !byte $b9, $af, $c6                                               ; 3792: b9 af c6    ... :3661[1]
@@ -7588,6 +7598,7 @@ show_section_letter_dialog
     ldy level_specific_password_ptr + 1                               ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
+; 'Section [0d]' EOR-encrypted with $cb
 section_encrypted_string
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
@@ -8415,8 +8426,8 @@ init_tiles_loop
     sta screen_base_address_high                                      ; 3d8f: 85 4c       .L
 ; Check to see if VDU output was disabled (VDU 21) when we first started to execute,
 ; before we re-enabled output (VDU 6) ourselves.
-; TODO: Is this to make the G file self-contained if it's run directly from the command
-; line during development, instead of from IMOGEN?
+; This could be to make the G file self-contained if it's run directly from the command
+; line during development, instead of from IMOGEN
     lda initial_screen_disabled_flag                                  ; 3d91: ad 6e 3f    .n?
     bne clear_toolbar_part_of_screen                                  ; 3d94: d0 0d       ..
 ; VDU output wasn't disabled when we started to execute. Change to MODE 4.
@@ -9232,8 +9243,8 @@ pydis_end
 !if (<(address1_low)) != $70 {
     !error "Assertion failed: <(address1_low) == $70"
 }
-!if (<(cells_per_line * rows_per_cell)) != $40 {
-    !error "Assertion failed: <(cells_per_line * rows_per_cell) == $40"
+!if (<(cells_per_character_row * rows_per_cell)) != $40 {
+    !error "Assertion failed: <(cells_per_character_row * rows_per_cell) == $40"
 }
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
@@ -9451,8 +9462,8 @@ pydis_end
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
 }
-!if (>(cells_per_line * rows_per_cell)) != $01 {
-    !error "Assertion failed: >(cells_per_line * rows_per_cell) == $01"
+!if (>(cells_per_character_row * rows_per_cell)) != $01 {
+    !error "Assertion failed: >(cells_per_character_row * rows_per_cell) == $01"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
@@ -9733,11 +9744,11 @@ pydis_end
 !if (cat_walk_cycle_animation - cat_base_animation) != $29 {
     !error "Assertion failed: cat_walk_cycle_animation - cat_base_animation == $29"
 }
-!if (cells_per_line) != $28 {
-    !error "Assertion failed: cells_per_line == $28"
+!if (cells_per_character_row) != $28 {
+    !error "Assertion failed: cells_per_character_row == $28"
 }
-!if (cells_per_line-1) != $27 {
-    !error "Assertion failed: cells_per_line-1 == $27"
+!if (cells_per_character_row-1) != $27 {
+    !error "Assertion failed: cells_per_character_row-1 == $27"
 }
 !if (check_password) != $53c0 {
     !error "Assertion failed: check_password == $53c0"
@@ -10099,9 +10110,6 @@ pydis_end
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
 }
-!if (spriteid_197) != $c5 {
-    !error "Assertion failed: spriteid_197 == $c5"
-}
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
 }
@@ -10188,6 +10196,9 @@ pydis_end
 }
 !if (spriteid_erase_player_accessory) != $c6 {
     !error "Assertion failed: spriteid_erase_player_accessory == $c6"
+}
+!if (spriteid_erase_sparkles) != $c5 {
+    !error "Assertion failed: spriteid_erase_sparkles == $c5"
 }
 !if (spriteid_fingertip_tile_restoration) != $1e {
     !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"

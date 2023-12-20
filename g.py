@@ -38,7 +38,7 @@ constant(0xff, "osfile_load")
 
 constant(320, "screen_width_in_pixels")
 constant(39, "screen_width_minus_one")
-constant(40, "cells_per_line")          # TODO: 'per_character_row'?
+constant(40, "cells_per_character_row")
 constant(7, "max_filename_len")
 constant(8, "rows_per_cell")
 constant(8, "bytes_per_cell")
@@ -163,13 +163,12 @@ substitute_labels = {
         "l0075": "first_cell_in_row_screen_address_high",
         "l0076": "cell_screen_address_low",
         "l0077": "cell_screen_address_high",
-         # TODO: Maybe rename the next two - "off_screen_address" is named based on its 'final' use in the lda (off_screen_address),y, but it may be more instructive to think of original... differently
-         "l0078": "original_off_screen_address_low",
-         "l0079": "original_off_screen_address_high",
-         "l007a": "off_screen_address_low",
-         "l007b": "off_screen_address_high",
-         "l007c": "cell_x_plus_current_cell_within_row",
-         "l007d": "current_row",
+        "l0078": "original_off_screen_address_low",
+        "l0079": "original_off_screen_address_high",
+        "l007a": "off_screen_address_low",
+        "l007b": "off_screen_address_high",
+        "l007c": "cell_x_plus_current_cell_within_row",
+        "l007d": "current_row",
     },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
@@ -377,7 +376,7 @@ label(0x0039, "bit_mask_for_random_number_limit")
 label(0x003f, "only_ever_written_to_with_zero")
 label(0x0043, "print_in_italics_flag")
 label(0x0044, "default_collision_map_option")
-label(0x0045, "eor_key") # TODO: Is this *always* $cb in practice?
+label(0x0045, "eor_key") # This is this *always* $cb in practice
 label(0x0046, "return_key_pressed_pending")
 label(0x0049, "temp_value")
 label(0x004a, "temp_coordinate")
@@ -762,7 +761,7 @@ On Exit:
     expr(0x133d, make_lo("sprite_197"))
     expr(0x133f, make_hi("sprite_197"))
     decimal(0x1341)
-    expr(0x1341, "spriteid_197")
+    expr(0x1341, "spriteid_erase_sparkles")
     decimal(0x1349)
     decimal(0x134d)
     comment(0x134e, "The first two bytes of the level data is the offset to the sprite table")
@@ -885,7 +884,7 @@ This self-modifies code""")
     label(0x14ad, "check_within_vertical_range2")
     label(0x14b7, "y_coordinate_is_within_character_row2")
     label(0x14c8, "byte_not_finished_yet2")
-    expr(0x14ea, "cells_per_line")
+    expr(0x14ea, "cells_per_character_row")
     label(0x14fe, "move_to_next_column_while_rendering_reflected_about_y_axis2")
 
     label(0x1517, "draw_sprite2")
@@ -938,7 +937,7 @@ This self-modifies code""")
     comment(0x15c9, "reset sprite address")
     comment(0x15d5, "move to next column")
     comment(0x15de, "if we reach the right hand edge of the screen then we are done")
-    expr(0x15df, "cells_per_line")
+    expr(0x15df, "cells_per_character_row")
     decimal(0x15df)
     comment(0x15e2, "reset to start of (i.e. bit 7 of) next byte", inline=True)
     comment(0x15e2, "move sprite addresses on by eight to get to next cell column")
@@ -961,16 +960,16 @@ This self-modifies code""")
     comment(0x1653, "clamp to left edge")
     comment(0x1657, "if fully off screen to the right, then pull values and return else just return")
     decimal(0x1658)
-    expr(0x1658, "cells_per_line")
+    expr(0x1658, "cells_per_character_row")
     label(0x165e, "sprite_clamp_x_left")
     label(0x1670, "sprite_clamp_x_right")
-    expr(0x1675, "cells_per_line")
+    expr(0x1675, "cells_per_character_row")
     decimal(0x1675)
     expr(0x167b, make_lo("screen_width_in_pixels-1"))
     comment(0x167e, "set x position to the right edge (319)")
     expr(0x167f, make_lo("screen_width_in_pixels-1"))
     expr(0x1683, make_hi("screen_width_in_pixels-1"))
-    expr(0x1687, "cells_per_line-1")
+    expr(0x1687, "cells_per_character_row-1")
     decimal(0x1687)
     label(0x168a, "sprite_clip_x")
     comment(0x168e, "exit if fully offscreen", inline=True)
@@ -1034,7 +1033,7 @@ On Entry:
     label(0x178a, "return4")
     label(0x178b, "vsync_counter")
     entry(0x178c, "wait_for_vsync")
-    # TODO: Possibly something to do with trying to avoid flicker as sprites update? Doesn't obviously look like palette change code.
+    comment(0x1791, "wait for vsync timer to help avoid flicker")
     entry(0x1791, "wait_for_timer_2_using_yx")
     label(0x179a, "delay_loop")
     entry(0x17a0, "irq1_routine")
@@ -1181,7 +1180,8 @@ On Entry:
     comment(0x1a4c, "got completion spell")
     comment(0x1a54, "add level completion spell to toolbar")
     label(0x1a59, "skip_adding_level_completion_spell")
-    expr(0x1a5d, "spriteid_197")
+    expr(0x1a5d, "spriteid_erase_sparkles")
+    expr(0x1a62, "spriteid_one_pixel_masked_out")
     comment(0x1a66, "exit if level is completed")
     expr(0x1a6a, "first_level_letter")
     label(0x1a73, "set direction of animation")
@@ -1226,8 +1226,8 @@ On Entry:
     entry(0x1b41, "all_cells_in_row_copied")
     comment(0x1b47, "Advance first_cell_in_row_screen_address by one row and reset cell_screen_address")
     comment(0x1b49, "C is clear because beq above not taken", inline=True)
-    expr(0x1b4a, make_lo(make_multiply("cells_per_line", "rows_per_cell")))
-    expr(0x1b52, make_hi(make_multiply("cells_per_line", "rows_per_cell")))
+    expr(0x1b4a, make_lo(make_multiply("cells_per_character_row", "rows_per_cell")))
+    expr(0x1b52, make_hi(make_multiply("cells_per_character_row", "rows_per_cell")))
     ab(0x1b57)
     label(0x1b59, "now_write_to_collision_map")
     label(0x1b64, "skip_writing_to_collision_map")
@@ -2204,7 +2204,7 @@ On Exit:
     label(0x2ab7, "skip_developer_shift_key_handling")
     label(0x2abd, "shift_key_detected")
     label(0x2aa0, "update_menu_with_game_paused")
-    comment(0x2ac0, "wait for a bit", inline=True)
+    comment(0x2ac0, "wait for a bit to slow down the gameplay/animation for debugging purposes")
     label(0x2ac4, "delay_loop1")
     label(0x2acd, "over_a_player_character_or_later_on_menu")
     label(0x2ada, "return19")
@@ -2236,9 +2236,10 @@ On Exit:
     comment(0x2b49, "return if transforming-in")
     comment(0x2b52, "return if we are already this player character")
     comment(0x2b59, "reduce number of transformations left and execute transformation")
-    comment(0x2b5c, "branch if no transformations remaining before decrement", inline=True) # TODO: rephrase as "branch if decrement failed"? and maybe make associated change in comment at 2c8c?
+    comment(0x2b5c, "branch if zero transformations were remaining before attempted decrement")
     label(0x2b64, "return21")
     label(0x2b65, "check_for_extra_menu_item_chosen")
+    expr(0x2b6f, "spriteid_icodata_wizard")
     label(0x2b84, "skip6")
     label(0x2b86, "return22")
     stars(0x2b87, "Insert a player character menu item into the toolbar")
@@ -2298,7 +2299,7 @@ On Entry:
 On Exit:
     Preserves A,X,Y""")
     entry(0x2c0c, "plot_menu_item")
-    comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
+    comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. This just saving the old value because it's tidy/safe. We could just do lda #blah:sta screen_base_address_high at the end of this routine.")
     expr(0x2c15, make_hi("toolbar_screen_address"))
     comment(0x2c2b, "erase where menu item used to be")
     label(0x2c35, "plot_menu_item_sprites")
@@ -2415,11 +2416,13 @@ if (not already falling) then branch (start falling)""")
     expr(0x2e5e, "wizard_animation12 - wizard_base_animation")
     label(0x2e5f, "wizard_got_index_in_animation")
     comment(0x2e6b, "wizard is holding an object")
+    expr(0x2e78, "objectid_player")
     label(0x2e82, "wizard_skip_holding_object_handling")
     comment(0x2e85, "update sprite for wizard")
     expr(0x2e86, make_lo("wizard_base_animation"))
     expr(0x2e88, make_hi("wizard_base_animation"))
     comment(0x2e8f, "update collision")
+    expr(0x2e90, "objectid_player")
     comment(0x2e9d, "Save the current value of player_using_object at previous_player_using_object")
     comment(0x2ea3, "Set player_using_object_spriteid to player_held_object_spriteid if player is using an object, or zero otherwise.")
     comment(0x2ea5, "if (the player is not using an item) then branch")
@@ -2525,6 +2528,7 @@ if (not already falling) then branch (start falling)""")
     label(0x30a5, "cat_got_index_in_animation")
     expr(0x30aa, make_lo("cat_base_animation"))
     expr(0x30ac, make_hi("cat_base_animation"))
+    expr(0x30b1, "objectid_player")
     comment(0x30b5, "update cat tail")
     expr(0x30b6, make_lo("cat_tail_spriteids"))
     expr(0x30ba, make_hi("cat_tail_spriteids"))
@@ -2644,6 +2648,7 @@ if (not already falling) then branch (start falling)""")
     label(0x3331, "monkey_got_index_in_animation")
     expr(0x333b, make_lo("monkey_base_animation"))
     expr(0x333d, make_hi("monkey_base_animation"))
+    expr(0x3342, "objectid_player")
     expr(0x3347, make_lo("monkey_tail_spriteids"))
     expr(0x334b, make_hi("monkey_tail_spriteids"))
     comment(0x3346, "start updating the tail")
@@ -2689,9 +2694,7 @@ On Exit:
     expr(0x341f, make_lo("press_l_to_load_encrypted_string"))
     expr(0x3421, make_hi("press_l_to_load_encrypted_string"))
     label(0x3428, "remove_dialog_local1")
-    comment(0x342b, "'Press S to save\\r' EOR-encrypted with $cb")
     label(0x342b, "press_s_to_save_encrypted_string")
-    comment(0x343b, "'Press L to load\\r' EOR-encrypted with $cb")
     label(0x343b, "press_l_to_load_encrypted_string")
     stars(0x344b)
     label(0x344b, "update_disc_menu")
@@ -2723,9 +2726,7 @@ On Exit:
     string(0x34d7, 4)
     label(0x34db, "save_leaf_filename")
     stringcr(0x34db)
-    comment(0x34e3, "'Which drive?\\r' EOR-encrypted with $cb")
     label(0x34e3, "which_drive_encrypted_string")
-    comment(0x34f0, "'Press 0,1,2 or 3\\r' EOR-encrypted with $cb")
     label(0x34f0, "press_012_or_3_encrypted_string")
 
     label(0x3501, "test_for_drive_number_key_press")
@@ -3091,7 +3092,7 @@ expr(0x3d73, "object_z_order + objectid_player_accessory")
 comment(0x3d75, "seed random number generation by reading the User VIA timers")
 comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game area")
 comment(0x3d91, "Check to see if VDU output was disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU 6) ourselves.")
-comment(0x3d91, "TODO: Is this to make the G file self-contained if it's run directly from the command line during development, instead of from IMOGEN?")
+comment(0x3d91, "This could be to make the G file self-contained if it's run directly from the command line during development, instead of from IMOGEN")
 comment(0x3d96, "VDU output wasn't disabled when we started to execute. Change to MODE 4.")
 expr(0x3d97, "vdu_set_mode")
 label(0x3da3, "clear_toolbar_part_of_screen")
@@ -3158,12 +3159,12 @@ comment(0x3ec1, "write special register 'track' with value 39")
 decimal(0x3ec2)
 entry(0x3ec9, "seek_track_a")
 entry(0x3ed5, "set_track_special_register_to_a")
-label(0x3ee1, "osword_7f_block_seek") # TODO: poor name
+label(0x3ee1, "osword_7f_block_seek")
 do_osword_7f_block_partial(0x3ee1)
 comment(0x3ee7, "command ($69=seek)", inline=True)
 label(0x3ee8, "osword_7f_block_seek_track")
-label(0x3ee9, "osword_7f_seek_result") # TODO: poor name
-label(0x3eea, "osword_7f_block_write_special_register") # TODO: poor name
+label(0x3ee9, "osword_7f_seek_result")
+label(0x3eea, "osword_7f_block_write_special_register")
 do_osword_7f_block_partial(0x3eea)
 comment(0x3ef0, "command ($7a=write special register)", inline=True)
 comment(0x3ef1, "special register ($12=track)", inline=True)
@@ -3328,6 +3329,23 @@ while bin_addr < bin_range[-1]:
             break
     bin_addr += 1
 
+def emessage(addr):
+    password = get_password(addr)
+    comment(addr, "'" + password + "' EOR-encrypted with $cb")
+
+emessage(0x1752)
+emessage(0x342b)
+emessage(0x343b)
+emessage(0x3498)
+emessage(0x34e3)
+emessage(0x34f0)
+emessage(0x3535)
+emessage(0x3546)
+emessage(0x35f7)
+emessage(0x35fe)
+emessage(0x3606)
+emessage(0x3655)
+emessage(0x37b1)
 
 # TODO: Temp reference code for EOR-decrypting in Python:
 # s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
@@ -3384,7 +3402,7 @@ print("""; *********************************************************************
 
 go()
 
-# TODO: Crude notes on how to use room_index_cheat1:
+# NOTE: Crude notes on how to use room_index_cheat1:
 # - set a debugger breakpoint on 127e
 # - enter level password (I think you need to be on a different level beforehand)
 # - poke 2 to 9ef+level index (which is in X) - 2 is a bit arbitrary, key thing is b6 clear

@@ -144,7 +144,6 @@ constant(2, "object_collided_floor")
 constant(4, "object_collided_right_wall")
 constant(8, "object_collided_ceiling")
 
-# TODO: Use this more generally or maybe just get rid of it?
 def label_word(addr, s):
     label(addr, s)
     expr_label(addr + 1, make_add(s, "1"))
@@ -255,7 +254,7 @@ common_sprite_dict = {
     0x56: "spriteid_rope2",
     0x57: "spriteid_rope3",
     0x58: "spriteid_rope4",
-    197: "spriteid_197",            # TODO: Better name
+    197: "spriteid_erase_sparkles",
     198: "spriteid_erase_player_accessory",
     199: "spriteid_erase_player",
 }
@@ -267,12 +266,11 @@ def common_to_all(level_letter):
 
     constant(0x4c, "opcode_jmp")
 
-    # TODO: There are only 16 levels which is A-P, but we have Q as well. I hadn't realised that before. I suspect Q might be used for the "game completed" message, but that is just a guess. (Note that there is a dataQ file on disc.) It's possible last_level_letter is misnamed or it would be better to express 'Q' as last_level_letter(='P')+1. Depends how it all works in the code.
+    # There are 16 levels which is A-P, but we have Q as well.
+    # Q is used for the "epilogue", a message on game completion.
     constant(0x41, "first_level_letter") # TODO: would be nice to use 'A' as constant
-    constant(0x51, "last_level_letter") # TODO: would be nice to use 'Q' as constant
+    constant(0x51, "last_level_letter")  # TODO: would be nice to use 'Q' as constant
 
-    # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
-    #
     optional_label(0x0015, "sprite_op_flags")
     label(0x0016, "sprite_id")
     label(0x0018, "sprite_x_base_low")
