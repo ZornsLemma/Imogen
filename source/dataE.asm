@@ -1016,10 +1016,10 @@ update_bird
     jsr set_base_animation_address_and_handle_transform_in_out        ; 3ec3: 20 ee 22
     bne c3f3a                                                         ; 3ec6: d0 72
     cpy #$3f ; '?'                                                    ; 3ec8: c0 3f
-    beq c3ed0                                                         ; 3eca: f0 04
+    beq reverse_direction_of_player                                   ; 3eca: f0 04
     cpy #$61 ; 'a'                                                    ; 3ecc: c0 61
     bne c3edb                                                         ; 3ece: d0 0b
-c3ed0
+reverse_direction_of_player
     lda object_direction                                              ; 3ed0: ad be 09
     eor #$fe                                                          ; 3ed3: 49 fe
     sta object_direction                                              ; 3ed5: 8d be 09
@@ -2180,7 +2180,6 @@ pydis_end
 ;     c3db7
 ;     c3dcf
 ;     c3dd6
-;     c3ed0
 ;     c3edb
 ;     c3ee3
 ;     c3ef7
