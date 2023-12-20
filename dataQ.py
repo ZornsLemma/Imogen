@@ -190,9 +190,11 @@ print("""; *********************************************************************
 ;
 ; Level Q: 'EPILOGUE'
 ;
-; Shows a scrolling message to tie in with the back story of Imogen, then displays
-; a copyright message (see 'encoded_message') and 'The End' in large letters (a bitmap).
-; At this point an infinite loop is entered. The player must reset the machine.
+; Shows a scrolling message to tie in with the back story of Imogen (see 'encoded_message'),
+; then displays a copyright message (see copyright_message) and 'The End' in large letters
+; (a bitmap). At this point an infinite loop is entered. The player must reset the machine.
+;
+; The character definitions are embedded (an italic version of the standard BBC characters).
 ;
 ; Unused code:
 ; 1. There is code to press a key to restart the game. (Reloading the toolbar etc)
