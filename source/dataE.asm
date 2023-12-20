@@ -789,7 +789,7 @@ room_2_not_first_update
     ldy #4                                                            ; 3d49: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3d4b: 20 e2 28
     beq c3d64                                                         ; 3d4e: f0 14
-    lda #$d1                                                          ; 3d50: a9 d1
+    lda #spriteid_bird_toolbar                                        ; 3d50: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3d52: 20 87 2b
     lda #spriteid_one_pixel_masked_out                                ; 3d55: a9 00
     sta object_spriteid + objectid_bird                               ; 3d57: 8d ac 09
@@ -1059,7 +1059,7 @@ c3ef7
 c3f1e
     dec temp_left_offset                                              ; 3f1e: ce d0 24
 c3f21
-    lda #0                                                            ; 3f21: a9 00
+    lda #objectid_player                                              ; 3f21: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
     beq c3f30                                                         ; 3f26: f0 08
     stx current_player_animation                                      ; 3f28: 8e df 09
@@ -1080,7 +1080,7 @@ c3f3d
     cmp #bird_animation10 - bird_base_animations                      ; 3f40: c9 66
     bne c3f5c                                                         ; 3f42: d0 18
     dec temp_top_offset                                               ; 3f44: ce 50 25
-    lda #0                                                            ; 3f47: a9 00
+    lda #objectid_player                                              ; 3f47: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f49: 20 94 28
     bne c3f55                                                         ; 3f4c: d0 07
     cpy #bird_animation10 - bird_base_animations                      ; 3f4e: c0 66
@@ -1155,7 +1155,7 @@ c3fca
     ldx #<bird_base_animations                                        ; 3fce: a2 46
     ldy #>bird_base_animations                                        ; 3fd0: a0 3b
     jsr set_player_spriteid_and_offset_from_animation_table           ; 3fd2: 20 00 22
-    lda #0                                                            ; 3fd5: a9 00
+    lda #objectid_player                                              ; 3fd5: a9 00
     jsr update_object_a_solid_rock_collision                          ; 3fd7: 20 f5 25
     lda #$40 ; '@'                                                    ; 3fda: a9 40
     sta room_exit_direction                                           ; 3fdc: 85 70
@@ -1605,7 +1605,7 @@ adding_positive_value_to_x
     adc thrown_egg_y_low                                              ; 42b5: 6d 72 0a
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
     jsr update_object_properties_for_small_egg                        ; 42bb: 20 1d 43
-    lda #2                                                            ; 42be: a9 02
+    lda #objectid_small_egg                                           ; 42be: a9 02
     jsr update_object_a_solid_rock_collision                          ; 42c0: 20 f5 25
     lda object_x_low + objectid_small_egg                             ; 42c3: ad 52 09
     sta thrown_egg_x_low                                              ; 42c6: 8d 70 0a
@@ -1631,7 +1631,7 @@ adding_positive_value_to_x
     sbc #0                                                            ; 42f7: e9 00
     sta thrown_egg_x_high                                             ; 42f9: 8d 71 0a
     dec room_containing_small_egg                                     ; 42fc: ce 75 0a
-    jmp c4317                                                         ; 42ff: 4c 17 43
+    jmp hide_small_egg                                                ; 42ff: 4c 17 43
 
 c4302
     lda object_right_cell_x                                           ; 4302: a5 79
@@ -1643,7 +1643,7 @@ c4302
     lda #1                                                            ; 430f: a9 01
     sta thrown_egg_x_high                                             ; 4311: 8d 71 0a
     inc room_containing_small_egg                                     ; 4314: ee 75 0a
-c4317
+hide_small_egg
     lda #spriteid_one_pixel_masked_out                                ; 4317: a9 00
     sta object_spriteid + objectid_small_egg                          ; 4319: 8d aa 09
 return3
@@ -1954,7 +1954,7 @@ not_end_of_egg_animation_sequence
     jmp new_egg_animation_index_in_y                                  ; 44dc: 4c 38 45
 
 c44df
-    cmp #5                                                            ; 44df: c9 05
+    cmp #egg_tilted_animation - egg_animations_table                  ; 44df: c9 05
     bne c450b                                                         ; 44e1: d0 28
     jsr test_if_small_egg_hit_large_egg                               ; 44e3: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44e6: f0 50
@@ -2204,7 +2204,6 @@ pydis_end
 ;     c4219
 ;     c4240
 ;     c4302
-;     c4317
 ;     c4359
 ;     c4370
 ;     c4373
@@ -2477,6 +2476,9 @@ pydis_end
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (objectid_small_egg) != $02 {
     !error "Assertion failed: objectid_small_egg == $02"
