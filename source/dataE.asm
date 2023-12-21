@@ -26,12 +26,12 @@
 ;
 ; Solution:
 ;
-;   1. Move to the room o the right and climb the rope to collect the small egg
+;   1. Move to the room to the right and climb the rope to collect the small egg
 ;   2. Return to the starting room and climb the rope exiting on the right to stand on nest.
 ;   3. As the wizard, use the small egg to tilt the big egg.
 ;   4. Collect the small egg and throw from the same position. (The big egg falls)
-;   5. Jump onto the big egg as the cat and jump onto the left ledge to exit the room left.
-;   6. Climb the rope looking right to the top then jump off to the right, timing it to
+;   5. Jump onto the big egg as the cat and jump onto the left platform to exit the room left.
+;   6. Climb the rope while looking right to the top then jump off to the right, timing it to
 ;      collide with the bird.
 ;   7. Change into the bird and fly up to the top room to collect the spell.
 ;
