@@ -33,11 +33,15 @@ sprite_dict = {**common_sprite_dict, **sprite_dict}
 
 # Multiple rooms
 constant(2, "objectid_small_egg")
+constant(3, "objectid_fire1")           # Room 0, 2 and 3
 constant(4, "objectid_bird")
 constant(5, "objectid_bird_wings")
 
 # Room 1
 constant(3, "objectid_egg")
+
+# Room 3
+constant(4, "objectid_fire2")
 
 
 # When the egg is off-screen, this counts up every update cycle it is not visible (capping at &80). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
@@ -201,6 +205,7 @@ expr(0x3c14, sprite_dict)
 label(0x3cd3, "room_2_check_right_exit")
 expr(0x3cd6, "exit_room_right")
 label(0x3ce0, "room_2_update_handler")
+expr(0x3ce6, "objectid_fire1")
 comment(0x3cee, "check for first update in room (branch if not)")
 comment(0x3cfa, "check for level change (branch if not)")
 expr(0x3d1b, sprite_dict)
@@ -236,6 +241,8 @@ expr(0x3df1, "object_direction + objectid_bird")
 expr(0x3df4, "object_direction + objectid_bird_wings")
 label(0x3df6, "return1")
 label(0x3e96, "room_3_update_handler")
+expr(0x3e9c, "objectid_fire1")
+expr(0x3ea5, "objectid_fire2")
 entry(0x3eb8, "update_bird")
 expr(0x3eb9, "bird_transition_out_animation - bird_base_animations")
 expr(0x3ebe, make_lo("bird_base_animations"))
@@ -298,6 +305,7 @@ label(0x40cb, "small_egg_falling_animation")
 expr(0x40cb, sprite_dict)
 comment(0x40cf, "The small egg starts in room 0 but it can move between rooms, either by being carried by the player or by being thrown. Its position updating is always handled by room_0_update_handler wherever it is.")
 label(0x40cf, "room_0_update_handler")
+expr(0x40d9, "objectid_fire1")
 comment(0x40dd, "check for first update in room (branch if so)")
 entry(0x40e5, "room0_first_update")
 expr(0x40e6, sprite_dict)

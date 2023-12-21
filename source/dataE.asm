@@ -29,6 +29,8 @@ object_collided_right_wall            = 4
 objectid_bird                         = 4
 objectid_bird_wings                   = 5
 objectid_egg                          = 3
+objectid_fire1                        = 3
+objectid_fire2                        = 4
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
@@ -736,7 +738,7 @@ room_2_check_right_exit
 room_2_update_handler
     lda #2                                                            ; 3ce0: a9 02
     sta currently_updating_logic_for_room_index                       ; 3ce2: 8d ba 1a
-    lda #3                                                            ; 3ce5: a9 03
+    lda #objectid_fire1                                               ; 3ce5: a9 03
     ldx #$14                                                          ; 3ce7: a2 14
     ldy #$0c                                                          ; 3ce9: a0 0c
     jsr update_brazier_and_fire                                       ; 3ceb: 20 88 19
@@ -993,11 +995,11 @@ room_3_game_update_loop
 room_3_update_handler
     lda #3                                                            ; 3e96: a9 03
     sta currently_updating_logic_for_room_index                       ; 3e98: 8d ba 1a
-    lda #3                                                            ; 3e9b: a9 03
+    lda #objectid_fire1                                               ; 3e9b: a9 03
     ldx #3                                                            ; 3e9d: a2 03
     ldy #5                                                            ; 3e9f: a0 05
     jsr update_brazier_and_fire                                       ; 3ea1: 20 88 19
-    lda #4                                                            ; 3ea4: a9 04
+    lda #objectid_fire2                                               ; 3ea4: a9 04
     ldx #$25 ; '%'                                                    ; 3ea6: a2 25
     jsr update_brazier_and_fire                                       ; 3ea8: 20 88 19
     ldx #$1b                                                          ; 3eab: a2 1b
@@ -1367,7 +1369,7 @@ room_0_update_handler
     sta currently_updating_logic_for_room_index                       ; 40d1: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 40d4: a2 25
     ldy #$11                                                          ; 40d6: a0 11
-    lda #3                                                            ; 40d8: a9 03
+    lda #objectid_fire1                                               ; 40d8: a9 03
     jsr update_brazier_and_fire                                       ; 40da: 20 88 19
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 40dd: ad 2b 13
@@ -2473,6 +2475,12 @@ pydis_end
 }
 !if (objectid_bird) != $04 {
     !error "Assertion failed: objectid_bird == $04"
+}
+!if (objectid_fire1) != $03 {
+    !error "Assertion failed: objectid_fire1 == $03"
+}
+!if (objectid_fire2) != $04 {
+    !error "Assertion failed: objectid_fire2 == $04"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
