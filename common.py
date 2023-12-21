@@ -395,8 +395,8 @@ def common_to_all(level_letter):
 
     # Shared between all levels except 'dataQ' (and they mess up the tidy output of Q):
     if level_letter != 'Q':
-        label(0x3add, "room_index_cheat1")
-        label(0x3ade, "room_index_cheat2")
+        label(0x3add, "initial_room_index")
+        label(0x3ade, "initial_room_index_cheat")
         label(0x3adf, "level_room_data_table")
         expr_label(0x3ae0, make_add("level_room_data_table", "1"))
 

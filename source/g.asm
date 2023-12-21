@@ -40,6 +40,44 @@
 ; game can continue. Because both sets of code/data don't need to reside in memory at the same time,
 ; this is a memory saving system known as an overlay.
 ;
+; Cheat codes
+; -----------
+; At the password entry dialog:
+;
+; 'REVIEW-MODE':
+;       Enables two more cheat codes:
+;           'DUMP' to screen dump to an EPSON printer
+;           'EPILOGUE' to show the game's ending.
+;
+; 'TEST-MODE':
+;       As above, but also enables:
+;           * 'GIMME' to set all levels complete and adds the completion spell to the toolbar
+;                     ready to complete the game.
+;           * If the menu pointer is on one of the first four items, then SHIFT advances the
+;             game one tick (for debugging animations?)
+;           * ESCAPE resets the game, but only works if the appropriate bit is set in ICODATA
+;             at startup and bank 13 has sideways RAM.
+;           * Can enter one letter to skip to that level
+;           * Can enter zero characters to restart the game
+;           * On the EPILOGUE, holding the up arrow speeds up the scrolling of the text.
+;             (noticeable when not much text is on-screen)
+;
+; 'DEBUG-MODE':
+;        As all of the above, but also enables:
+;           * The toolbar changes to a magenta background
+;           * Entering each level automatically collects the objects required to complete the level
+;           * In dataN ('PAVLOV-WAS-HERE'), pressing 'O' starts the dog salivating
+;           * In dataK ('DRIPPING-STUFF'), pressing 'G' grows the plant and 'P' poisons it once grown
+;
+; 'MONO':
+;           * Selects a colour scheme suitable for monochrome monitors
+;
+; 'COLOUR':
+;           * Selects a colour scheme suitable for colour monitors (the default)
+;
+; 'QUIT':
+;           * Restarts the game
+;
 ; *************************************************************************************
 
 ; Constants
@@ -497,8 +535,8 @@ sprite_197                                          = $0bc5
 level_specific_initialisation_ptr                   = $3ad7
 level_specific_update_ptr                           = $3ad9
 level_specific_password_ptr                         = $3adb
-room_index_cheat1                                   = $3add
-room_index_cheat2                                   = $3ade
+initial_room_index                                  = $3add
+initial_room_index_cheat                            = $3ade
 level_room_data_table                               = $3adf
 auxcode                                             = $53c0
 check_password                                      = $53c0
@@ -820,14 +858,19 @@ set_player_position_for_new_room
     lda level_progress_table,x                                        ; 13af: bd ef 09    ... :127e[1]
     and #7                                                            ; 13b2: 29 07       ).  :1281[1]
     sta desired_room_index                                            ; 13b4: 85 30       .0  :1283[1]
+; the level_progress_table doesn't ever set bit 6, so in reality the following branch
+; is never taken.
     lda level_progress_table,x                                        ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne skip_developer_mode_code1                                     ; 13bb: d0 0f       ..  :128a[1]
-    lda room_index_cheat1                                             ; 13bd: ad dd 3a    ..: :128c[1]
+; set initial room based on the value in the level header
+    lda initial_room_index                                            ; 13bd: ad dd 3a    ..: :128c[1]
     sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
     bpl skip_developer_mode_code1                                     ; 13c5: 10 05       ..  :1294[1]
-    lda room_index_cheat2                                             ; 13c7: ad de 3a    ..: :1296[1]
+; this is a debugging aid, allowing the level header to temporarily set a different
+; start room, as a particular room is being developed/debugged.
+    lda initial_room_index_cheat                                      ; 13c7: ad de 3a    ..: :1296[1]
     sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
 ; get room data address
 skip_developer_mode_code1
@@ -1884,9 +1927,9 @@ reset_game_because_escape_pressed
     jsr reset_code                                                    ; 1970: 20 45 18     E. :183f[1]
     jmp initialise_display                                            ; 1973: 4c 00 0c    L.. :1842[1]
 
-; Assuming there is sideways RAM mapped into ROM slot 13, this copy 256 bytes from
-; $be00 to $0c00, and 256 bytes from $bf00 to $0b00. Could this be code helping during
-; development of the game?
+; If there is sideways RAM mapped into ROM slot 13, this copies data that had been
+; previously saved to sideways RAM: 256 bytes from $be00 to $0c00, and 256 bytes from
+; $bf00 to $0b00. This is code to help reset the game during development.
 reset_code
     sei                                                               ; 1976: 78          x   :1845[1]
     lda #$0c                                                          ; 1977: a9 0c       ..  :1846[1]

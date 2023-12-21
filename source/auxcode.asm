@@ -28,6 +28,7 @@ opcode_jmp                                     = 76
 osbyte_flush_buffer_class                      = 15
 osbyte_read_write_escape_break_effect          = 200
 osbyte_read_write_first_byte_break_intercept   = 247
+spriteid_menu_item_completion_spell            = 33
 vdu_cr                                         = 13
 vdu_lf                                         = 10
 
@@ -150,8 +151,8 @@ level_data                                          = $3ad5
 level_specific_initialisation_ptr                   = $3ad7
 level_specific_update_ptr                           = $3ad9
 level_specific_password_ptr                         = $3adb
-room_index_cheat1                                   = $3add
-room_index_cheat2                                   = $3ade
+initial_room_index                                  = $3add
+initial_room_index_cheat                            = $3ade
 level_room_data_table                               = $3adf
 oswrch                                              = $ffee
 osbyte                                              = $fff4
@@ -285,8 +286,7 @@ password_ptr_table
     !byte $9f, $8e, $85, $8f, $8e, $99, $e6, $83, $84, $84, $80, $98  ; 551f: 9f 8e 85... ...            ; EOR-encrypted string: 'TENDER-HOOKS'
     !byte $c6                                                         ; 552b: c6          .
     !word normal_level_handler                                        ; 552c: 95 55       .U
-; TODO: Some intriguing secret passwords here. Now I see this, I have a vague
-; recollection of The Micro User or Acorn User printing some/all of these (See
+; Some intriguing secret passwords here. The Micro User printed these (See
 ; https://archive.org/details/micro-user-058/page/n52/mode/1up), but still cool to find
 ; them for myself. :-)
     !byte $8e, $9b, $82, $87, $84, $8c, $9e, $8e, $c6                 ; 552e: 8e 9b 82... ...            ; EOR-encrypted string: 'EPILOGUE'
@@ -349,13 +349,13 @@ set_developer_flags_and_continue
     ldx #0                                                            ; 55c3: a2 00       ..
     ldy #3                                                            ; 55c5: a0 03       ..
     and #1                                                            ; 55c7: 29 01       ).
-    beq c55d3                                                         ; 55c9: f0 08       ..
+    beq set_up_break_effects                                          ; 55c9: f0 08       ..
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 55cb: a5 5b       .[
-    beq c55d3                                                         ; 55cd: f0 04       ..
+    beq set_up_break_effects                                          ; 55cd: f0 04       ..
     ldx #opcode_jmp                                                   ; 55cf: a2 4c       .L
 ; For break effect: *FX 200,1
     ldy #1                                                            ; 55d1: a0 01       ..
-c55d3
+set_up_break_effects
     tya                                                               ; 55d3: 98          .
     pha                                                               ; 55d4: 48          H
     lda #osbyte_read_write_first_byte_break_intercept                 ; 55d5: a9 f7       ..
@@ -394,17 +394,17 @@ colour_handler
 gimme_handler
     lda developer_flags                                               ; 561c: ad 03 11    ...
     and #1                                                            ; 561f: 29 01       ).
-    beq c5635                                                         ; 5621: f0 12       ..
+    beq return_a_one                                                  ; 5621: f0 12       ..
     ldy #$0f                                                          ; 5623: a0 0f       ..
-loop_c5625
+mark_all_levels_complete_loop
     lda level_progress_table,y                                        ; 5625: b9 ef 09    ...
     ora #$80                                                          ; 5628: 09 80       ..
     sta level_progress_table,y                                        ; 562a: 99 ef 09    ...
     dey                                                               ; 562d: 88          .
-    bpl loop_c5625                                                    ; 562e: 10 f5       ..
-    lda #$21 ; '!'                                                    ; 5630: a9 21       .!
+    bpl mark_all_levels_complete_loop                                 ; 562e: 10 f5       ..
+    lda #spriteid_menu_item_completion_spell                          ; 5630: a9 21       .!
     jsr find_or_create_menu_slot_for_A                                ; 5632: 20 bd 2b     .+
-c5635
+return_a_one
     lda #1                                                            ; 5635: a9 01       ..
     jmp return1                                                       ; 5637: 4c 4e 54    LNT
 
@@ -415,11 +415,11 @@ power_of_2_table
 dump_handler
     lda developer_flags                                               ; 5642: ad 03 11    ...
     and #2                                                            ; 5645: 29 02       ).
-    bne c564e                                                         ; 5647: d0 05       ..
+    bne screen_dump_to_epson_printer                                  ; 5647: d0 05       ..
     lda #1                                                            ; 5649: a9 01       ..
     jmp return1                                                       ; 564b: 4c 4e 54    LNT
 
-c564e
+screen_dump_to_epson_printer
     lda #2                                                            ; 564e: a9 02       ..             ; turn on printer output
     jsr oswrch                                                        ; 5650: 20 ee ff     ..            ; Write character 2
 ; 'ESC 64': Reset printer to its power up state
@@ -581,12 +581,6 @@ line_feed_loop
     jmp return1                                                       ; 5788: 4c 4e 54    LNT
 
 pydis_end
-
-; Automatically generated labels:
-;     c55d3
-;     c5635
-;     c564e
-;     loop_c5625
 !if (<accepted_encrypted_string) != $07 {
     !error "Assertion failed: <accepted_encrypted_string == $07"
 }
@@ -655,6 +649,9 @@ pydis_end
 }
 !if (review_mode_handler) != $55b4 {
     !error "Assertion failed: review_mode_handler == $55b4"
+}
+!if (spriteid_menu_item_completion_spell) != $21 {
+    !error "Assertion failed: spriteid_menu_item_completion_spell == $21"
 }
 !if (test_mode_handler) != $55b9 {
     !error "Assertion failed: test_mode_handler == $55b9"

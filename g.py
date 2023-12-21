@@ -698,6 +698,9 @@ The control flow during gameplay is as follows:
     stringcr(0x1276)
     label(0x1278, "set_player_position_for_new_room")
     expr(0x127c, "first_level_letter")
+    comment(0x1285, "the level_progress_table doesn't ever set bit 6, so in reality the following branch is never taken.")
+    comment(0x128c, "set initial room based on the value in the level header")
+    comment(0x1296, "this is a debugging aid, allowing the level header to temporarily set a different start room, as a particular room is being developed/debugged.")
     label(0x129b, "skip_developer_mode_code1")
     comment(0x129b, "get room data address")
     comment(0x12a9, "read first byte into X and the second byte into Y. This is the player start position in cells")
@@ -1053,7 +1056,7 @@ On Entry:
     label(0x1825, "change_palette_logical_colour_x_to_y")
     label(0x1830, "change_palette_loop")
     entry(0x1839, "reset_game_because_escape_pressed")
-    comment(0x1845, "Assuming there is sideways RAM mapped into ROM slot 13, this copy 256 bytes from $be00 to $0c00, and 256 bytes from $bf00 to $0b00. Could this be code helping during development of the game?")
+    comment(0x1845, "If there is sideways RAM mapped into ROM slot 13, this copies data that had been previously saved to sideways RAM: 256 bytes from $be00 to $0c00, and 256 bytes from $bf00 to $0b00. This is code to help reset the game during development.")
     label(0x1845, "reset_code")
     comment(0x1848, "select ROM in slot 13", inline=True)
     label(0x184d, "copy_from_rom_c_loop")
@@ -3025,9 +3028,9 @@ On Exit:
     label(0x3acb, "move_right_requested")
     expr_label(0x3ad6, make_add("level_data", "1"))
 
-# TODO: With developer_flags, set the start room to go to?
-label(0x3add, "room_index_cheat1")
-label(0x3ade, "room_index_cheat2")
+label(0x3add, "initial_room_index")
+# With developer_flags, set the start room to go to
+label(0x3ade, "initial_room_index_cheat")
 
 # Startup code
 comment(0x3c06, "The loader will have executed VDU 21 to disable VDU output. Record the current disable state before re-enabling it, so we can check it later as part of a copy protection scheme.")
@@ -3400,19 +3403,48 @@ print("""; *********************************************************************
 ; game can continue. Because both sets of code/data don't need to reside in memory at the same time,
 ; this is a memory saving system known as an overlay.
 ;
+; Cheat codes
+; -----------
+; At the password entry dialog:
+;
+; 'REVIEW-MODE':
+;       Enables two more cheat codes:
+;           'DUMP' to screen dump to an EPSON printer
+;           'EPILOGUE' to show the game's ending
+;
+; 'TEST-MODE':
+;       As above, but also enables:
+;           * 'GIMME' to set all levels complete and adds the completion spell to the toolbar
+;                     ready to complete the game.
+;           * If the menu pointer is on one of the first four items, then SHIFT advances the
+;             game one tick (for debugging animations?)
+;           * ESCAPE resets the game, but only works if the appropriate bit is set in ICODATA
+;             at startup and bank 13 has sideways RAM.
+;           * Can enter one letter to skip to that level
+;           * Can enter zero characters to restart the game
+;           * On the EPILOGUE, holding the up arrow speeds up the scrolling of the text.
+;             (noticeable when not much text is on-screen)
+;
+; 'DEBUG-MODE':
+;        As all of the above, but also enables:
+;           * The toolbar changes to a magenta background
+;           * Entering each level automatically collects the objects required to complete the level
+;           * In dataN ('PAVLOV-WAS-HERE'), pressing 'O' starts the dog salivating
+;           * In dataK ('DRIPPING-STUFF'), pressing 'G' grows the plant and 'P' poisons it once grown
+;
+; 'MONO':
+;           * Selects a colour scheme suitable for monochrome monitors
+;
+; 'COLOUR':
+;           * Selects a colour scheme suitable for colour monitors (the default)
+;
+; 'QUIT':
+;           * Restarts the game
+;
 ; *************************************************************************************
 """)
 
 go()
-
-# NOTE: Crude notes on how to use room_index_cheat1:
-# - set a debugger breakpoint on 127e
-# - enter level password (I think you need to be on a different level beforehand)
-# - poke 2 to 9ef+level index (which is in X) - 2 is a bit arbitrary, key thing is b6 clear
-# - poke room number to 3add
-# - continue
-# I am sure there is a better way to do it, but this does seem to work.
-
 
 # vi: tw=100
 

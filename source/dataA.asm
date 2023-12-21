@@ -192,8 +192,8 @@ spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
 spriteid_rope_hook                    = 11
-spriteid_saxophone1                   = 210
-spriteid_saxophone2                   = 211
+spriteid_saxophone                    = 210
+spriteid_saxophone_menu_item          = 211
 spriteid_small_ball                   = 203
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
@@ -345,9 +345,9 @@ level_specific_update_ptr
     !word level_specific_update                                       ; 3ad9: 17 3b                   ; address of level update code
 level_specific_password_ptr
     !word level_specific_password                                     ; 3adb: e7 3a                   ; address of level password
-room_index_cheat1
+initial_room_index
     !byte 0                                                           ; 3add: 00
-room_index_cheat2
+initial_room_index_cheat
     !byte 1                                                           ; 3ade: 01
 level_room_data_table
     !word room_0_data                                                 ; 3adf: 27 3b                   ; table of room data/initialisation code
@@ -376,7 +376,7 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_not_active                                     ; 3afb: 10 07
 ; add the saxophone menu item to the toolbar (due to being in developer mode)
-    lda #spriteid_saxophone2                                          ; 3afd: a9 d3
+    lda #spriteid_saxophone_menu_item                                 ; 3afd: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b
     lda #$ff                                                          ; 3b02: a9 ff                   ; redundant instruction
 ; check the saxophone collected flag. The user can choose during the course of a game
@@ -387,7 +387,7 @@ developer_mode_not_active
     beq set_ground_fill_2x2_as_source_sprite                          ; 3b07: f0 05
 ; add the saxophone menu item to the toolbar (due to having collected it on a previous
 ; visit to the level)
-    lda #spriteid_saxophone2                                          ; 3b09: a9 d3
+    lda #spriteid_saxophone_menu_item                                 ; 3b09: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b
 set_ground_fill_2x2_as_source_sprite
     lda #<ground_fill_2x2_top_left                                    ; 3b0e: a9 86
@@ -1084,9 +1084,9 @@ room1_saxophone_and_brazier_handler
     jsr update_brazier_and_fire                                       ; 3f0d: 20 88 19
     lda update_room_first_update_flag                                 ; 3f10: ad 2b 13
     beq not_first_room_update                                         ; 3f13: f0 3d
-    lda #spriteid_saxophone2                                          ; 3f15: a9 d3
+    lda #spriteid_saxophone_menu_item                                 ; 3f15: a9 d3
     sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e
-    lda #spriteid_saxophone1                                          ; 3f1a: a9 d2
+    lda #spriteid_saxophone                                           ; 3f1a: a9 d2
     sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 3f1f: 8d f3 2e
     ldx #<envelope3                                                   ; 3f22: a2 16
@@ -1110,14 +1110,14 @@ room1_saxophone_and_brazier_handler
     sta object_direction,x                                            ; 3f44: 9d be 09
     lda #spriteid_erase1                                              ; 3f47: a9 cc
     sta object_erase_type,x                                           ; 3f49: 9d ac 38
-    lda #spriteid_saxophone1                                          ; 3f4c: a9 d2
+    lda #spriteid_saxophone                                           ; 3f4c: a9 d2
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09
 return3
     rts                                                               ; 3f51: 60
 
 not_first_room_update
     lda player_using_object_spriteid                                  ; 3f52: ad b6 2e
-    cmp #spriteid_saxophone2                                          ; 3f55: c9 d3
+    cmp #spriteid_saxophone_menu_item                                 ; 3f55: c9 d3
     bne dont_play_saxophone_sound                                     ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
     ldx #<saxophone_sound                                             ; 3f5b: a2 24
@@ -1129,7 +1129,7 @@ dont_play_saxophone_sound
     bne return6                                                       ; 3f66: d0 22
     lda save_game_level_a_saxophone_collected_flag                    ; 3f68: ad 00 0a
     bne return6                                                       ; 3f6b: d0 1d
-    lda #spriteid_saxophone1                                          ; 3f6d: a9 d2
+    lda #spriteid_saxophone                                           ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
 ; This is the state of the player as currently drawn on the screen, before being
 ; updated in the current game tick.
@@ -1138,7 +1138,7 @@ dont_play_saxophone_sound
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28
     beq return6                                                       ; 3f79: f0 0f
 ; Collect the saxophone.
-    lda #spriteid_saxophone2                                          ; 3f7b: a9 d3
+    lda #spriteid_saxophone_menu_item                                 ; 3f7b: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b
     lda #0                                                            ; 3f80: a9 00
     sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09
@@ -1465,7 +1465,7 @@ check_for_using_saxophone
     cmp #2                                                            ; 4139: c9 02
     bne player_not_using_saxophone                                    ; 413b: d0 21
     lda player_using_object_spriteid                                  ; 413d: ad b6 2e
-    cmp #spriteid_saxophone2                                          ; 4140: c9 d3
+    cmp #spriteid_saxophone_menu_item                                 ; 4140: c9 d3
     bne player_not_using_saxophone                                    ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
     lda #baby_spriteid_shrug - baby_spriteid_data                     ; 4146: a9 19
@@ -2330,11 +2330,11 @@ pydis_end
 !if (spriteid_mouse_hands4) != $d5 {
     !error "Assertion failed: spriteid_mouse_hands4 == $d5"
 }
-!if (spriteid_saxophone1) != $d2 {
-    !error "Assertion failed: spriteid_saxophone1 == $d2"
+!if (spriteid_saxophone) != $d2 {
+    !error "Assertion failed: spriteid_saxophone == $d2"
 }
-!if (spriteid_saxophone2) != $d3 {
-    !error "Assertion failed: spriteid_saxophone2 == $d3"
+!if (spriteid_saxophone_menu_item) != $d3 {
+    !error "Assertion failed: spriteid_saxophone_menu_item == $d3"
 }
 !if (spriteid_small_ball) != $cb {
     !error "Assertion failed: spriteid_small_ball == $cb"

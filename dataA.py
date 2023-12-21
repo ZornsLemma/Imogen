@@ -14,8 +14,8 @@ sprite_dict = {
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
-    0xd2: "spriteid_saxophone1",
-    0xd3: "spriteid_saxophone2",
+    0xd2: "spriteid_saxophone",
+    0xd3: "spriteid_saxophone_menu_item",
     0xd4: "spriteid_mouse_hands3",
     0xd5: "spriteid_mouse_hands4",
     0xd6: "spriteid_baby_walk_cycle_0",
@@ -278,21 +278,21 @@ ldx_ldy_jsr_play_sound_yx(0x3ef7, "sound1")
 ldx_ldy_jsr_play_sound_yx(0x3efe, "sound2")
 entry(0x3f02, "room1_saxophone_and_brazier_handler")
 expr(0x3f08, "objectid_brazier")
-expr(0x3f16, "spriteid_saxophone2")
+expr(0x3f16, "spriteid_saxophone_menu_item")
 expr(0x3f18, make_add("toolbar_collectable_spriteids", "1"))
-expr(0x3f1b, "spriteid_saxophone1")
+expr(0x3f1b, "spriteid_saxophone")
 expr(0x3f1d, make_add("collectable_spriteids", "1"))
 ldx_ldy_jsr_define_envelope(0x3f26, "envelope3")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 expr(0x3f3d, "objectid_saxophone")
 expr(0x3f48, sprite_dict)
-expr(0x3f4d, "spriteid_saxophone1")
+expr(0x3f4d, "spriteid_saxophone")
 entry(0x3f51, "return3")
 entry(0x3f52, "not_first_room_update")
-expr(0x3f56, "spriteid_saxophone2")
+expr(0x3f56, "spriteid_saxophone_menu_item")
 ldx_ldy_jsr_play_sound_yx(0x3f5f, "saxophone_sound")
 entry(0x3f62, "dont_play_saxophone_sound")
-expr(0x3f6e, "spriteid_saxophone1")
+expr(0x3f6e, "spriteid_saxophone")
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 comment(0x3f72, "This is the state of the player as currently drawn on the screen, before being updated in the current game tick.")
 expr(0x3f73, "objectid_old_player")
@@ -347,7 +347,7 @@ comment(0x412e, "Y contains the baby animation step")
 expr(0x412f, make_subtract("baby_spriteid_none", "baby_spriteid_data"))
 expr(0x4133, make_subtract("baby_spriteid_smile", "baby_spriteid_data"))
 entry(0x4137, "check_for_using_saxophone")
-expr(0x4141, "spriteid_saxophone2")
+expr(0x4141, "spriteid_saxophone_menu_item")
 expr(0x4147, make_subtract("baby_spriteid_shrug", "baby_spriteid_data"))
 comment(0x4156, "set baby dead")
 expr(0x4157, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
