@@ -553,6 +553,8 @@ entry(0x45d2, "load_a_and_return")
 label(0x45d6, "return_a")
 label(0x45d7, "saved_y")
 label(0x460c, "source_sprite_data")
+label(0x4373, "test_for_small_egg_collision_with_rock_and_play_sound")
+label(0x4370, "small_egg_moving_right")
 
 for i in range(0x4099, 0x40cf):
     byte(i)

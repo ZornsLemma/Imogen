@@ -1730,13 +1730,13 @@ c4359
     beq return4                                                       ; 4360: f0 26
     lda object_x_high + objectid_small_egg                            ; 4362: ad 68 09
     sbc object_x_high_old + objectid_small_egg                        ; 4365: ed 73 09
-    bpl c4370                                                         ; 4368: 10 06
+    bpl small_egg_moving_right                                        ; 4368: 10 06
     dec temp_left_offset                                              ; 436a: ce d0 24
-    jmp c4373                                                         ; 436d: 4c 73 43
+    jmp test_for_small_egg_collision_with_rock_and_play_sound         ; 436d: 4c 73 43
 
-c4370
+small_egg_moving_right
     inc temp_right_offset                                             ; 4370: ee d1 24
-c4373
+test_for_small_egg_collision_with_rock_and_play_sound
     lda #1                                                            ; 4373: a9 01
     sta temp_bottom_offset                                            ; 4375: 8d 51 25
     lda #objectid_small_egg                                           ; 4378: a9 02
@@ -2222,8 +2222,6 @@ pydis_end
 ;     c4219
 ;     c4240
 ;     c4359
-;     c4370
-;     c4373
 ;     c4596
 ;     sub_c433b
 !if (<bird_accessory_sprite_list) != $45 {
