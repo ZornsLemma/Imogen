@@ -3423,12 +3423,12 @@ print("""; *********************************************************************
 ; When the user submits a password, the sprite memory is temporarily overwritten by the AUXCODE
 ; file which contains code to handle password and cheat code recognition (including a screendump
 ; facility for Epsom printers). Once finished, the SPRDATA is reloaded back into memory so the
-; game can continue. Because both sets of code/data don't need to reside in memory at the same time,
-; this is a memory saving system known as an overlay.
+; game can continue. Both sets of code/data don't need to reside in memory at the same time,
+; so this is a memory saving system known as an overlay.
 ;
 ; Cheat codes
 ; -----------
-; At the password entry dialog:
+; As well as entering level passwords, there are other codes available:
 ;
 ; 'REVIEW-MODE':
 ;       Enables two more cheat codes:
@@ -3463,6 +3463,49 @@ print("""; *********************************************************************
 ;
 ; 'QUIT':
 ;           * Restarts the game
+;
+; Notes:
+; ------
+; The game has a core engine (file 'g') that deals with drawing sprites, running the toolbar,
+; updating objects (including the player animations/state), object collision, loading levels,
+; moving between rooms, the collision map, etc.
+;
+; Each level is loaded as a separate file from disk (or cassette), and unusually is mainly code
+; with sprite data tacked on the end. The level code takes over control from the engine while it is
+; running. See 'initialise_level_and_room' for the flow control details.
+;
+; Because there are 16 levels, each with about 4K of code plus data, Imogen is a big game with
+; around 58K of code plus 26K of compressed sprites.
+;
+; The levels are stored in files dataA to dataP, and an epilogue (dataQ) played when the game is
+; completed. Each level holds 4 rooms, although this is not a restriction imposed by the engine.
+; More or fewer rooms would equally be possible so long as they fit in memory.
+;
+; Sprite drawing:
+;
+; The sprite drawing is particularly feature rich and therefore complex. It can draw sprites with
+; any pixel width and any height (1-255 pixels) at any pixel position on screen, which is clipped
+; properly to the edges of the screen. It draws optionally with a mask. Sprites can also be
+; drawn left-right reflected. They can have an offset whenever drawn, to aid with animations.
+;
+; Sprite data is stored in a compressed format, and drawn directly from the compressed data (not
+; decompressed). See 'sprite_op' for details of the compression etc.
+;
+; While plotting the sprite, the code can also optionally remember the previous contents of the
+; screen behind the masked sprite that's being drawn, into a masked compressed sprite area in
+; memory. This is so the screen background can be restored later by drawing that sprite.
+;
+; Objects:
+;
+; There is support in the core game code for objects. Objects have a current sprite, a position,
+; optionally a sprite area for erasing itself, a left-right direction, and a z-order. The game code
+; can deal with redrawing multiple overlapping sprites by erasing the sprites on top of a moving
+; sprite and redrawing just the sprites that need to be redrawn.
+;
+; Objects do not store animation data, nor have any physics associated. The individual levels are
+; responsible for any animations required. The state machine for an object is usually based around
+; the animations the object requires. There is no physics in the game. Gravity for example is
+; simulated via animations.
 ;
 ; *************************************************************************************
 """)
