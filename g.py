@@ -1791,6 +1791,7 @@ On Entry:
     comment(0x23d2, "if (player hit wall) then branch")
     comment(0x23d6, "player is being pushed.\ncheck direction of push.")
     comment(0x23db, "player being pushed right")
+    blank(0x23e2)
     label(0x23e2, "player_being_pushed_left")
     label(0x23e7, "check_for_collision_while_player_is_being_pushed")
     comment(0x23ec, "if no player-rock collision, then branch")
@@ -1798,6 +1799,7 @@ On Entry:
     label(0x23fa, "push_continues_no_collision")
     ab(0x23e0)
     ab(0x23f8)
+    blank(0x23fa)
     label(0x2404, "move_player_because_of_push")
     label(0x2406, "push_player_and_accessory_object_loop")
     comment(0x241a, "if no collision, or a push, branch (return)")
@@ -1875,6 +1877,7 @@ On Exit:
     comment(0x24e0, "get sprite Y offset")
     comment(0x24e4, "add sprite Y offset to object position, store in object_bottom")
     label(0x24eb, "add_ya_to_object_bottom1")
+    expr(0x23ed, "objectid_player")
     comment(0x24f7, "read sprite height")
     comment(0x24fb, "store sprite height minus one")
 

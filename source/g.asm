@@ -4325,6 +4325,7 @@ update_player_hitting_floor_or_pushed
     inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
     ldy #0                                                            ; 250f: a0 00       ..  :23de[1]
     beq check_for_collision_while_player_is_being_pushed              ; 2511: f0 05       ..  :23e0[1]   ; ALWAYS branch
+
 player_being_pushed_left
     dec temp_left_offset                                              ; 2513: ce d0 24    ..$ :23e2[1]
     ldy #$ff                                                          ; 2516: a0 ff       ..  :23e5[1]
@@ -4332,13 +4333,14 @@ check_for_collision_while_player_is_being_pushed
     lda #1                                                            ; 2518: a9 01       ..  :23e7[1]
     sta temp_bottom_offset                                            ; 251a: 8d 51 25    .Q% :23e9[1]
 ; if no player-rock collision, then branch
-    lda #0                                                            ; 251d: a9 00       ..  :23ec[1]
+    lda #objectid_player                                              ; 251d: a9 00       ..  :23ec[1]
     jsr get_solid_rock_collision_for_object_a                         ; 251f: 20 94 28     .( :23ee[1]
     beq push_continues_no_collision                                   ; 2522: f0 07       ..  :23f1[1]
 ; mark as a regular wall collision (no longer pushed)
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
     sta player_wall_collision_reaction_speed                          ; 2526: 8d 33 24    .3$ :23f5[1]
     bne if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2529: d0 20       .   :23f8[1]   ; ALWAYS branch
+
 push_continues_no_collision
     lda object_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
     beq move_player_because_of_push                                   ; 252e: f0 05       ..  :23fd[1]

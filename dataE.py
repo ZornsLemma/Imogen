@@ -66,6 +66,9 @@ define_level(4)
 #   This is weird, but makes the addresses unique.
 #
 substitute_labels = {
+    (0x3fdc, 0x3fde): {
+        "l0070": "object_left_low",
+    },
     (0x3ad5,0x4449): {
         "l0070": "room_exit_direction",
     },
@@ -158,6 +161,7 @@ label(0x3b7c, "bird_animation2")
 bird_step(0x3b7c)
 label(0x3b81, "bird_animation3")
 bird_step(0x3b81)
+label(0x3b85, "bird_animation3_mid_way")
 bird_step(0x3b85)
 label(0x3b8a, "bird_animation4")
 bird_step(0x3b8a)
@@ -170,6 +174,7 @@ bird_step(0x3b99)
 label(0x3b9e, "bird_animation8")
 bird_step(0x3b9e)
 label(0x3ba3, "bird_animation9")
+label(0x3ba7, "bird_animation9_mid_way")
 bird_step(0x3ba3)
 bird_step(0x3ba7)
 label(0x3bac, "bird_animation10")
@@ -250,7 +255,17 @@ expr(0x3eb9, "bird_transition_out_animation - bird_base_animations")
 expr(0x3ebe, make_lo("bird_base_animations"))
 expr(0x3ec0, make_hi("bird_base_animations"))
 expr(0x3ec2, "objectid_bird")
+comment(0x3ec8, "check for reversing bird direction")
+expr(0x3ec9, "bird_animation3_mid_way - bird_base_animations")
+expr(0x3ecd, "bird_animation9_mid_way - bird_base_animations")
 label(0x3ed0, "reverse_direction_of_player")
+label(0x3ee3, "no_floor_collision")
+label(0x3ef7, "left_or_right_requested")
+ab(0x3ef5)
+blank(0x3ef7)
+label(0x3f30, "left_and_right_requested")
+label(0x3f3d, "no_flying_requested")
+label(0x3f61, "bird_hit_wall_or_floor")
 expr(0x3ee9, "bird_animation6 - bird_base_animations")
 expr(0x3ef8, "bird_animation5 - bird_base_animations")
 expr(0x3f02, "bird_animation9 - bird_base_animations")
@@ -276,6 +291,7 @@ expr(0x3fab, "bird_animation2 - bird_base_animations")     #$36
 expr(0x3fbd, "bird_animation16 - bird_base_animations")    #$c0
 expr(0x3fc2, "bird_animation13 - bird_base_animations")    #$89
 expr(0x3fc9, "bird_animation14 - bird_base_animations")    #$9a
+label(0x3fca, "set_player_animation_step")
 expr(0x3fcf, make_lo("bird_base_animations"))
 expr(0x3fd1, make_hi("bird_base_animations"))
 expr(0x3fd6, "objectid_player")
@@ -471,6 +487,24 @@ entry(0x45d2, "load_a_and_return")
 label(0x45d6, "return_a")
 label(0x45d7, "saved_y")
 label(0x460c, "source_sprite_data")
+expr(0x4227, sprite_dict)
+expr(0x4274, "objectid_small_egg")
+ri(0x4274)
+label(0x4302, "check_and_move_small_egg_one_room_right")
+comment(0x42e6, "check and move small egg one room left")
+label(0x3dd6, "set_bird_object_x_and_direction")
+label(0x3f3a, "set_player_animation_step_local")
+expr(0x450c, make_subtract("egg_falling_straight_down_animation", "egg_animations_table"))         #$16
+label(0x3d12, "initialise_bird_in_room_1_or_2")
+comment(0x3d1a, "initialise bird")
+label(0x3d9f, "check_bird_is_present_in_room_1_or_2_and_choose_bird_sprite")
+label(0x3db7, "set_bird_sprite")
+label(0x3dcf, "set_x_to_high_byte_of_bird_x_position")
+label(0x3d6f, "store_bird_wind_animation_index")
+label(0x3d85, "check_bird_x_range_limits")
+comment(0x3d77, "flip bird direction")
+label(0x3d95, "add_direction_to_bird_x_position")
+label(0x3d64, "update_bird_animation")
 
 for i in range(0x4099, 0x40cf):
     byte(i)

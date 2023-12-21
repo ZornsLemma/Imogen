@@ -450,6 +450,7 @@ bird_animation3
     !byte 0                                                           ; 3b82: 00
     !byte $fc                                                         ; 3b83: fc
     !byte 0                                                           ; 3b84: 00
+bird_animation3_mid_way
     !byte spriteid_bird_2                                             ; 3b85: c9
     !byte 2                                                           ; 3b86: 02
     !byte $fe                                                         ; 3b87: fe
@@ -484,6 +485,7 @@ bird_animation9
     !byte 0                                                           ; 3ba4: 00
     !byte 0                                                           ; 3ba5: 00
     !byte $ff                                                         ; 3ba6: ff
+bird_animation9_mid_way
     !byte spriteid_bird_2                                             ; 3ba7: c9
     !byte 2                                                           ; 3ba8: 02
     !byte 0                                                           ; 3ba9: 00
@@ -752,7 +754,7 @@ room_2_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 3cfa: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3cfc: c5 51
-    beq c3d12                                                         ; 3cfe: f0 12
+    beq initialise_bird_in_room_1_or_2                                ; 3cfe: f0 12
     lda #$73 ; 's'                                                    ; 3d00: a9 73
     sta save_game_level_e_bird_global_x_position                      ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
@@ -760,11 +762,12 @@ room_2_update_handler
     sta bird_x_direction                                              ; 3d0a: 8d 7a 0a
     lda #0                                                            ; 3d0d: a9 00
     sta bird_wing_animation_index                                     ; 3d0f: 8d 7b 0a
-c3d12
+initialise_bird_in_room_1_or_2
     lda desired_room_index                                            ; 3d12: a5 30
     beq c3d34                                                         ; 3d14: f0 1e
     cmp #3                                                            ; 3d16: c9 03
     bcs c3d34                                                         ; 3d18: b0 1a
+; initialise bird
     lda #spriteid_erase_bird_wings                                    ; 3d1a: a9 df
     sta object_erase_type + objectid_bird_wings                       ; 3d1c: 8d b1 38
     lda #$fe                                                          ; 3d1f: a9 fe
@@ -776,7 +779,7 @@ c3d12
     sta object_y_high + objectid_bird                                 ; 3d2e: 8d 96 09
     sta object_y_high + objectid_bird_wings                           ; 3d31: 8d 97 09
 c3d34
-    jmp c3d9f                                                         ; 3d34: 4c 9f 3d
+    jmp check_bird_is_present_in_room_1_or_2_and_choose_bird_sprite   ; 3d34: 4c 9f 3d
 
 return1_local
     jmp return1                                                       ; 3d37: 4c f6 3d
@@ -787,11 +790,11 @@ room_2_not_first_update
     beq return1_local                                                 ; 3d3f: f0 f6
     lda desired_room_index                                            ; 3d41: a5 30
     cmp #2                                                            ; 3d43: c9 02
-    bne c3d64                                                         ; 3d45: d0 1d
+    bne update_bird_animation                                         ; 3d45: d0 1d
     ldx #objectid_old_player                                          ; 3d47: a2 0b
     ldy #objectid_bird                                                ; 3d49: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3d4b: 20 e2 28
-    beq c3d64                                                         ; 3d4e: f0 14
+    beq update_bird_animation                                         ; 3d4e: f0 14
     lda #spriteid_bird_toolbar                                        ; 3d50: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3d52: 20 87 2b
     lda #spriteid_one_pixel_masked_out                                ; 3d55: a9 00
@@ -800,37 +803,38 @@ room_2_not_first_update
     lda #$ff                                                          ; 3d5d: a9 ff
     sta save_game_level_e_bird_global_x_position                      ; 3d5f: 8d 15 0a
     bmi return1_local                                                 ; 3d62: 30 d3
-c3d64
+update_bird_animation
     ldy bird_wing_animation_index                                     ; 3d64: ac 7b 0a
     iny                                                               ; 3d67: c8
     lda bird_wing_animation_table,y                                   ; 3d68: b9 40 3b
-    bne c3d6f                                                         ; 3d6b: d0 02
+    bne store_bird_wind_animation_index                               ; 3d6b: d0 02
     ldy #0                                                            ; 3d6d: a0 00
-c3d6f
+store_bird_wind_animation_index
     sty bird_wing_animation_index                                     ; 3d6f: 8c 7b 0a
     lda bird_x_direction                                              ; 3d72: ad 7a 0a
-    bne c3d85                                                         ; 3d75: d0 0e
+    bne check_bird_x_range_limits                                     ; 3d75: d0 0e
+; flip bird direction
     lda bird_object_direction                                         ; 3d77: ad 79 0a
     eor #$fe                                                          ; 3d7a: 49 fe
     sta bird_object_direction                                         ; 3d7c: 8d 79 0a
     sta bird_x_direction                                              ; 3d7f: 8d 7a 0a
-    jmp c3d95                                                         ; 3d82: 4c 95 3d
+    jmp add_direction_to_bird_x_position                              ; 3d82: 4c 95 3d
 
-c3d85
+check_bird_x_range_limits
     lda save_game_level_e_bird_global_x_position                      ; 3d85: ad 15 0a
     cmp #bird_min_global_x_position                                   ; 3d88: c9 1e
     beq bird_hit_min_or_max_global_x_position                         ; 3d8a: f0 04
     cmp #bird_max_global_x_position                                   ; 3d8c: c9 74
-    bne c3d95                                                         ; 3d8e: d0 05
+    bne add_direction_to_bird_x_position                              ; 3d8e: d0 05
 bird_hit_min_or_max_global_x_position
     lda #0                                                            ; 3d90: a9 00
     sta bird_x_direction                                              ; 3d92: 8d 7a 0a
-c3d95
+add_direction_to_bird_x_position
     lda save_game_level_e_bird_global_x_position                      ; 3d95: ad 15 0a
     clc                                                               ; 3d98: 18
     adc bird_x_direction                                              ; 3d99: 6d 7a 0a
     sta save_game_level_e_bird_global_x_position                      ; 3d9c: 8d 15 0a
-c3d9f
+check_bird_is_present_in_room_1_or_2_and_choose_bird_sprite
     lda save_game_level_e_bird_global_x_position                      ; 3d9f: ad 15 0a
     cmp #$ff                                                          ; 3da2: c9 ff
     beq return1                                                       ; 3da4: f0 50
@@ -840,9 +844,9 @@ c3d9f
     bcs return1                                                       ; 3dac: b0 48
     lda #spriteid_bird_2                                              ; 3dae: a9 c9
     ldx bird_x_direction                                              ; 3db0: ae 7a 0a
-    bne c3db7                                                         ; 3db3: d0 02
+    bne set_bird_sprite                                               ; 3db3: d0 02
     lda #spriteid_bird_3                                              ; 3db5: a9 ca
-c3db7
+set_bird_sprite
     sta object_spriteid + objectid_bird                               ; 3db7: 8d ac 09
     ldy bird_wing_animation_index                                     ; 3dba: ac 7b 0a
     lda bird_wing_animation_table,y                                   ; 3dbd: b9 40 3b
@@ -850,15 +854,15 @@ c3db7
     lda save_game_level_e_bird_global_x_position                      ; 3dc3: ad 15 0a
     ldx desired_room_index                                            ; 3dc6: a6 30
     cpx #2                                                            ; 3dc8: e0 02
-    beq c3dcf                                                         ; 3dca: f0 03
+    beq set_x_to_high_byte_of_bird_x_position                         ; 3dca: f0 03
     sec                                                               ; 3dcc: 38
     sbc #$50 ; 'P'                                                    ; 3dcd: e9 50
-c3dcf
+set_x_to_high_byte_of_bird_x_position
     ldx #0                                                            ; 3dcf: a2 00
     cmp #$a0                                                          ; 3dd1: c9 a0
-    bcc c3dd6                                                         ; 3dd3: 90 01
+    bcc set_bird_object_x_and_direction                               ; 3dd3: 90 01
     dex                                                               ; 3dd5: ca
-c3dd6
+set_bird_object_x_and_direction
     stx object_x_high + objectid_bird                                 ; 3dd6: 8e 6a 09
     asl                                                               ; 3dd9: 0a
     rol object_x_high + objectid_bird                                 ; 3dda: 2e 6a 09
@@ -1017,40 +1021,42 @@ update_bird
     ldy #>bird_base_animations                                        ; 3ebf: a0 3b
     lda #objectid_bird                                                ; 3ec1: a9 04
     jsr set_base_animation_address_and_handle_transform_in_out        ; 3ec3: 20 ee 22
-    bne c3f3a                                                         ; 3ec6: d0 72
-    cpy #$3f ; '?'                                                    ; 3ec8: c0 3f
+    bne set_player_animation_step_local                               ; 3ec6: d0 72
+; check for reversing bird direction
+    cpy #bird_animation3_mid_way - bird_base_animations               ; 3ec8: c0 3f
     beq reverse_direction_of_player                                   ; 3eca: f0 04
-    cpy #$61 ; 'a'                                                    ; 3ecc: c0 61
+    cpy #bird_animation9_mid_way - bird_base_animations               ; 3ecc: c0 61
     bne c3edb                                                         ; 3ece: d0 0b
 reverse_direction_of_player
     lda object_direction                                              ; 3ed0: ad be 09
     eor #$fe                                                          ; 3ed3: 49 fe
     sta object_direction                                              ; 3ed5: 8d be 09
-    jmp c3fca                                                         ; 3ed8: 4c ca 3f
+    jmp set_player_animation_step                                     ; 3ed8: 4c ca 3f
 
 c3edb
     jsr update_player_hitting_floor_or_pushed                         ; 3edb: 20 c4 23
-    beq c3ee3                                                         ; 3ede: f0 03
-    jmp c3f61                                                         ; 3ee0: 4c 61 3f
+    beq no_floor_collision                                            ; 3ede: f0 03
+    jmp bird_hit_wall_or_floor                                        ; 3ee0: 4c 61 3f
 
-c3ee3
+no_floor_collision
     lda jump_requested                                                ; 3ee3: ad c7 3a
-    beq c3f3d                                                         ; 3ee6: f0 55
+    beq no_flying_requested                                           ; 3ee6: f0 55
     ldx #bird_animation6 - bird_base_animations                       ; 3ee8: a2 4e
     lda move_left_requested                                           ; 3eea: ad ca 3a
     ora move_right_requested                                          ; 3eed: 0d cb 3a
-    bne c3ef7                                                         ; 3ef0: d0 05
+    bne left_or_right_requested                                       ; 3ef0: d0 05
     dec temp_top_offset                                               ; 3ef2: ce 50 25
-    bne c3f21                                                         ; 3ef5: d0 2a
-c3ef7
+    bne c3f21                                                         ; 3ef5: d0 2a                   ; ALWAYS branch
+
+left_or_right_requested
     ldx #bird_animation5 - bird_base_animations                       ; 3ef7: a2 49
     lda move_left_requested                                           ; 3ef9: ad ca 3a
     and move_right_requested                                          ; 3efc: 2d cb 3a
-    bne c3f30                                                         ; 3eff: d0 2f
+    bne left_and_right_requested                                      ; 3eff: d0 2f
     ldx #bird_animation9 - bird_base_animations                       ; 3f01: a2 5d
     lda player_move_direction_requested                               ; 3f03: ad c9 3a
     cmp object_direction                                              ; 3f06: cd be 09
-    bne c3f30                                                         ; 3f09: d0 25
+    bne left_and_right_requested                                      ; 3f09: d0 25
     ldx #bird_animation7 - bird_base_animations                       ; 3f0b: a2 53
     lda #1                                                            ; 3f0d: a9 01
     sta temp_bottom_offset                                            ; 3f0f: 8d 51 25
@@ -1064,21 +1070,21 @@ c3f1e
 c3f21
     lda #objectid_player                                              ; 3f21: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
-    beq c3f30                                                         ; 3f26: f0 08
+    beq left_and_right_requested                                      ; 3f26: f0 08
     stx current_player_animation                                      ; 3f28: 8e df 09
     ldy #bird_animation8 - bird_base_animations                       ; 3f2b: a0 58
-    jmp c3f3a                                                         ; 3f2d: 4c 3a 3f
+    jmp set_player_animation_step_local                               ; 3f2d: 4c 3a 3f
 
-c3f30
+left_and_right_requested
     cpx current_player_animation                                      ; 3f30: ec df 09
-    beq c3f3a                                                         ; 3f33: f0 05
+    beq set_player_animation_step_local                               ; 3f33: f0 05
     stx current_player_animation                                      ; 3f35: 8e df 09
     txa                                                               ; 3f38: 8a
     tay                                                               ; 3f39: a8
-c3f3a
-    jmp c3fca                                                         ; 3f3a: 4c ca 3f
+set_player_animation_step_local
+    jmp set_player_animation_step                                     ; 3f3a: 4c ca 3f
 
-c3f3d
+no_flying_requested
     lda current_player_animation                                      ; 3f3d: ad df 09
     cmp #bird_animation10 - bird_base_animations                      ; 3f40: c9 66
     bne c3f5c                                                         ; 3f42: d0 18
@@ -1088,7 +1094,7 @@ c3f3d
     bne c3f55                                                         ; 3f4c: d0 07
     cpy #bird_animation10 - bird_base_animations                      ; 3f4e: c0 66
     beq c3f55                                                         ; 3f50: f0 03
-    jmp c3fca                                                         ; 3f52: 4c ca 3f
+    jmp set_player_animation_step                                     ; 3f52: 4c ca 3f
 
 c3f55
     lda #bird_animation16 - bird_base_animations                      ; 3f55: a9 c0
@@ -1097,17 +1103,17 @@ c3f55
 c3f5c
     lda object_has_hit_floor_flag                                     ; 3f5c: ad 8f 28
     bne c3f79                                                         ; 3f5f: d0 18
-c3f61
+bird_hit_wall_or_floor
     lda #bird_animation16 - bird_base_animations                      ; 3f61: a9 c0
     cmp current_player_animation                                      ; 3f63: cd df 09
-    beq c3f3a                                                         ; 3f66: f0 d2
+    beq set_player_animation_step_local                               ; 3f66: f0 d2
     ldx current_player_animation                                      ; 3f68: ae df 09
     sta current_player_animation                                      ; 3f6b: 8d df 09
     ldy #bird_animation12 - bird_base_animations                      ; 3f6e: a0 7c
     cpx #bird_animation7 - bird_base_animations                       ; 3f70: e0 53
-    beq c3f3a                                                         ; 3f72: f0 c6
+    beq set_player_animation_step_local                               ; 3f72: f0 c6
     ldy #bird_animation15 - bird_base_animations                      ; 3f74: a0 ab
-    jmp c3fca                                                         ; 3f76: 4c ca 3f
+    jmp set_player_animation_step                                     ; 3f76: 4c ca 3f
 
 c3f79
     ldx player_move_direction_requested                               ; 3f79: ae c9 3a
@@ -1145,14 +1151,14 @@ c3faf
     inx                                                               ; 3fb6: e8
 c3fb7
     lda object_just_fallen_off_edge_direction,x                       ; 3fb7: bd 90 28
-    beq c3fca                                                         ; 3fba: f0 0e
+    beq set_player_animation_step                                     ; 3fba: f0 0e
     ldy #bird_animation16 - bird_base_animations                      ; 3fbc: a0 c0
     sty current_player_animation                                      ; 3fbe: 8c df 09
     ldy #bird_animation13 - bird_base_animations                      ; 3fc1: a0 89
     cmp object_direction                                              ; 3fc3: cd be 09
-    beq c3fca                                                         ; 3fc6: f0 02
+    beq set_player_animation_step                                     ; 3fc6: f0 02
     ldy #bird_animation14 - bird_base_animations                      ; 3fc8: a0 9a
-c3fca
+set_player_animation_step
     sty object_current_index_in_animation                             ; 3fca: 8c d4 09
     tya                                                               ; 3fcd: 98
     ldx #<bird_base_animations                                        ; 3fce: a2 46
@@ -1161,7 +1167,7 @@ c3fca
     lda #objectid_player                                              ; 3fd5: a9 00
     jsr update_object_a_solid_rock_collision                          ; 3fd7: 20 f5 25
     lda #$40 ; '@'                                                    ; 3fda: a9 40
-    sta room_exit_direction                                           ; 3fdc: 85 70
+    sta object_left_low                                               ; 3fdc: 85 70
     lda #$3b ; ';'                                                    ; 3fde: a9 3b
     sta object_left_high                                              ; 3fe0: 85 71
     ldx object_current_index_in_animation                             ; 3fe2: ae d4 09
@@ -1524,7 +1530,7 @@ c4219
     beq return2                                                       ; 421f: f0 0f
     lda #spriteid_egg_toolbar                                         ; 4221: a9 d3
     jsr remove_item_from_toolbar_menu                                 ; 4223: 20 e0 2b
-    lda #0                                                            ; 4226: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4226: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 4228: 8d a9 09
     sta player_using_object_spriteid                                  ; 422b: 8d b6 2e
     sta player_held_object_spriteid                                   ; 422e: 85 52
@@ -1565,7 +1571,7 @@ small_egg_not_being_thrown
     bne small_egg_not_falling                                         ; 426c: d0 11
     lda #objectid_small_egg                                           ; 426e: a9 02
     sta temp_bottom_offset                                            ; 4270: 8d 51 25
-    lda #2                                                            ; 4273: a9 02
+    lda #objectid_small_egg                                           ; 4273: a9 02                   ; redundant instruction
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
     beq set_small_egg_animation_step                                  ; 4278: f0 0a                   ; branch if not collided with anything
     ldy #small_egg_stationary_animation - small_egg_animations        ; 427a: a0 01
@@ -1622,7 +1628,8 @@ adding_positive_value_to_x
     ldx #objectid_small_egg                                           ; 42dc: a2 02
     jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
     lda thrown_egg_direction                                          ; 42e1: ad 73 0a
-    bmi c4302                                                         ; 42e4: 30 1c
+    bmi check_and_move_small_egg_one_room_right                       ; 42e4: 30 1c
+; check and move small egg one room left
     lda object_left_cell_x                                            ; 42e6: a5 78
     cmp #game_area_width_cells                                        ; 42e8: c9 28
     bcc return3                                                       ; 42ea: 90 30
@@ -1636,7 +1643,7 @@ adding_positive_value_to_x
     dec room_containing_small_egg                                     ; 42fc: ce 75 0a
     jmp hide_small_egg                                                ; 42ff: 4c 17 43
 
-c4302
+check_and_move_small_egg_one_room_right
     lda object_right_cell_x                                           ; 4302: a5 79
     bpl return3                                                       ; 4304: 10 16
     lda thrown_egg_x_low                                              ; 4306: ad 70 0a
@@ -1980,7 +1987,7 @@ room_1_not_this_room3
     jmp new_egg_animation_index_in_y                                  ; 4508: 4c 38 45
 
 c450b
-    cmp #$16                                                          ; 450b: c9 16
+    cmp #egg_falling_straight_down_animation - egg_animations_table   ; 450b: c9 16
     bne new_egg_animation_index_in_y                                  ; 450d: d0 29
     lda room_1_egg_y                                                  ; 450f: ad 78 0a
     cmp #$a0                                                          ; 4512: c9 a0
@@ -2173,40 +2180,23 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3d12
 ;     c3d34
-;     c3d64
-;     c3d6f
-;     c3d85
-;     c3d95
-;     c3d9f
-;     c3db7
-;     c3dcf
-;     c3dd6
 ;     c3edb
-;     c3ee3
-;     c3ef7
 ;     c3f1e
 ;     c3f21
-;     c3f30
-;     c3f3a
-;     c3f3d
 ;     c3f55
 ;     c3f5c
-;     c3f61
 ;     c3f79
 ;     c3f87
 ;     c3f8f
 ;     c3fa6
 ;     c3faf
 ;     c3fb7
-;     c3fca
 ;     c412a
 ;     c41ec
 ;     c420c
 ;     c4219
 ;     c4240
-;     c4302
 ;     c4359
 ;     c4370
 ;     c4373
@@ -2300,6 +2290,9 @@ pydis_end
 !if (bird_animation3 - bird_base_animations) != $3b {
     !error "Assertion failed: bird_animation3 - bird_base_animations == $3b"
 }
+!if (bird_animation3_mid_way - bird_base_animations) != $3f {
+    !error "Assertion failed: bird_animation3_mid_way - bird_base_animations == $3f"
+}
 !if (bird_animation4 - bird_base_animations) != $44 {
     !error "Assertion failed: bird_animation4 - bird_base_animations == $44"
 }
@@ -2317,6 +2310,9 @@ pydis_end
 }
 !if (bird_animation9 - bird_base_animations) != $5d {
     !error "Assertion failed: bird_animation9 - bird_base_animations == $5d"
+}
+!if (bird_animation9_mid_way - bird_base_animations) != $61 {
+    !error "Assertion failed: bird_animation9_mid_way - bird_base_animations == $61"
 }
 !if (bird_max_global_x_position) != $74 {
     !error "Assertion failed: bird_max_global_x_position == $74"
