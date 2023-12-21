@@ -52,16 +52,6 @@ constant(0xff, "small_egg_status_collected") # probably only b7 set actually mat
 label(0x0a14, "save_game_level_e_big_egg_animation_index") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_bird_global_x_position") # X position within the bird's cross-screen flight path, not on screen - $ff means bird has been captured
 
-label(0xa73, "thrown_egg_direction")
-label(0xa74, "small_egg_animation_step")
-label(0xa75, "room_containing_small_egg") # TODO: speculation
-label(0xa76, "egg_animation_index")
-label(0xa77, "room_1_egg_x")
-label(0xa78, "room_1_egg_y")
-label(0xa7a, "bird_x_direction") # $ff (-1), 0 or 1
-label(0xa7b, "bird_wing_animation_index")
-
-
 common_to_all('E')
 define_level(4)
 
@@ -114,7 +104,15 @@ constant(0x74, "bird_max_global_x_position")
 label(0x0a70, "thrown_egg_x_low")
 label(0x0a71, "thrown_egg_x_high")
 label(0x0a72, "thrown_egg_y_low")
+label(0x0a73, "thrown_egg_direction")
+label(0x0a74, "small_egg_animation_step")
+label(0x0a75, "room_containing_small_egg")
+label(0x0a76, "egg_animation_index")
+label(0x0a77, "room_1_egg_x")
+label(0x0a78, "room_1_egg_y")
 label(0x0a79, "bird_object_direction")
+label(0x0a7a, "bird_x_direction")
+label(0x0a7b, "bird_wing_animation_index")
 
 expr(0x3b02, "small_egg_status_collected")
 expr(0x3b07, "spriteid_bird_toolbar")
@@ -276,9 +274,9 @@ expr(0x3fec, make_lo("bird_accessory_sprites"))
 expr(0x3fee, make_hi("bird_accessory_sprites"))
 comment(0x4099, "Table for the small egg animations. Each step in an animation is three bytes:\n(0) spriteid, (1) X offset, (2) Y offset.\nEach animation is terminated by an extra zero byte.")
 label(0x4099, "small_egg_animations")
-label(0x4099+1, "small_egg_stationary_animation")
-label(0x4099+5, "small_egg_start_throwing_animation")
+label(0x409a, "small_egg_stationary_animation")
 expr(0x409a, sprite_dict)
+label(0x409e, "small_egg_start_throwing_animation")
 expr(0x409e, "spriteid_one_pixel_masked_out")
 expr(0x40a1, sprite_dict)
 label(0x40a5, "small_egg_thrown_right_animation")
@@ -470,22 +468,22 @@ for i in range(0x4099, 0x40cf):
 # TODO: Ideally this table would be formatted something like this, but the formatting of py8dis is limited atm.
 #egg_animations_table
 #    !byte 0
-#    !byte spriteid_large_egg_upright ,   0, 0
+#    !byte  spriteid_large_egg_upright,  0, 0
 #    !byte 0                                                ; terminator
 #
-#    !byte spriteid_large_egg_tilted  ,   0, 0
+#    !byte   spriteid_large_egg_tilted,  0, 0
 #    !byte 0                                                ; terminator
 #
-#    !byte spriteid_large_egg_tilted  ,  -8, 0
-#    !byte spriteid_large_egg_sideways,  -8, 8
-#    !byte spriteid_large_egg_sideways,  -4, 4
-#    !byte spriteid_large_egg_sideways,  -4, 4
+#    !byte   spriteid_large_egg_tilted, -8, 0
+#    !byte spriteid_large_egg_sideways, -8, 8
+#    !byte spriteid_large_egg_sideways, -4, 4
+#    !byte spriteid_large_egg_sideways, -4, 4
 #    !byte 0                                                ; terminator
 #
-#    !byte spriteid_large_egg_sideways,   0, 8
+#    !byte spriteid_large_egg_sideways,  0, 8
 #    !byte 0                                                ; terminator
 #
-#    !byte spriteid_large_egg_sideways,   0, 0
+#    !byte spriteid_large_egg_sideways,  0, 0
 #    !byte 0                                                ; terminator
 
 
