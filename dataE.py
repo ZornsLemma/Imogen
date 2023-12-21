@@ -45,18 +45,21 @@ constant(4, "objectid_fire2")
 constant(5, "objectid_sparkles")
 
 
-# When the egg is off-screen, this counts up every update cycle it is not visible (capping at &80). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
+# When the egg is off-screen, this counts up every update cycle it is not visible (capping at &80).
+# When entering the room containing the egg, the game performs (up to) this number of egg animation
+# updates without modifying the screen, giving the effect that the egg starts exactly where it has
+# had time to reach if it was thrown off-screen.
 label(0xa6f, "level_workspace_small_egg_offscreen_time")
 
 set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-constant(0xff, "small_egg_status_collected") # probably only b7 set actually matters
+constant(0xff, "small_egg_status_collected")
 
-label(0x0a13, "save_game_level_e_small_egg_status")         # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something' (it is also set to 1 on entering level for first time) - it is set to &ff when the egg is collected (at 4213), it is set to c at 41c3 when the egg throw starts, it is set to &32 at 4262 when the egg collides with floor or big egg after being thrown, though shortly after it is set to 1 at 427c - ok, the 427c set to 1 happens when it lands, this occurs quicker when thrown at wall because it has less time to fall, the delay is more obvious when throwing at the big egg - note also that the egg has a little bit of horizontal rebound (at least when hitting wall after knocking the big egg over) - I think this covers more or less everything
-label(0x0a14, "save_game_level_e_big_egg_animation_index")  # TODO: other uses? not checked yet? egg state slightly speculative but prob right
-label(0x0a15, "save_game_level_e_bird_global_x_position")   # X position within the bird's cross-screen flight path, not on screen - $ff means bird has been captured
+label(0x0a13, "save_game_level_e_small_egg_status")
+label(0x0a14, "save_game_level_e_big_egg_animation_index")
+label(0x0a15, "save_game_level_e_bird_global_x_position")
 
 common_to_all('E')
 define_level(4)
@@ -317,31 +320,31 @@ expr(0x3f48, "objectid_player")
 expr(0x3f4f, "bird_start_hop_animation - bird_base_animations")
 label(0x3f55, "set_falling_straight_down")
 expr(0x3f56, "bird_fall_straight_down_animation - bird_base_animations")    #$c0
-expr(0x3f5b, "bird_animation11 - bird_base_animations")    #$6f
+expr(0x3f5b, "bird_animation11 - bird_base_animations")                     #$6f
 label(0x3f5c, "check_if_player_is_on_the_floor")
 label(0x3f61, "bird_hit_wall_or_floor")
 expr(0x3f62, "bird_fall_straight_down_animation - bird_base_animations")    #$c0
-expr(0x3f6f, "bird_animation12 - bird_base_animations")    #$7c
-expr(0x3f71, "bird_flying_sideways_animation - bird_base_animations")     #$53
-expr(0x3f75, "bird_animation15 - bird_base_animations")    #$ab
+expr(0x3f6f, "bird_animation12 - bird_base_animations")                     #$7c
+expr(0x3f71, "bird_flying_sideways_animation - bird_base_animations")       #$53
+expr(0x3f75, "bird_animation15 - bird_base_animations")                     #$ab
 label(0x3f79, "check_for_player_change_of_direction")
-expr(0x3f7f, "bird_turn1_animation - bird_base_animations")     #$3b
-expr(0x3f86, "bird_start_hop_animation - bird_base_animations")    #$66
+expr(0x3f7f, "bird_turn1_animation - bird_base_animations")                 #$3b
+expr(0x3f86, "bird_start_hop_animation - bird_base_animations")             #$66
 label(0x3f87, "set_next_animation_to_hop")
-expr(0x3f88, "bird_start_hop_animation - bird_base_animations")    #$66
+expr(0x3f88, "bird_start_hop_animation - bird_base_animations")             #$66
 label(0x3f8f, "bird_is_stationary")
-expr(0x3f93, "bird_stationary_on_floor_animation - bird_base_animations")     #$44
-expr(0x3f97, "bird_stationary_for_a_while_animation - bird_base_animations")     #$36
+expr(0x3f93, "bird_stationary_on_floor_animation - bird_base_animations")   #$44
+expr(0x3f97, "bird_stationary_for_a_while_animation - bird_base_animations")  #$36
 comment(0x3f9a, "bird is staionary on the ground. set a delay before the bird changes to the 'stationary for a while' state. There seems to be no point in this extra state. Perhaps there were once idle sprites that were later dropped during development.")
 expr(0x3f9f, "bird_stationary_on_floor_animation - bird_base_animations")     #$44
 label(0x3fa6, "check_for_change_to_stationary_for_a_while_state")
-expr(0x3fab, "bird_stationary_for_a_while_animation - bird_base_animations")     #$36
+expr(0x3fab, "bird_stationary_for_a_while_animation - bird_base_animations")  #$36
 label(0x3faf, "check_for_falling_off_edge")
 label(0x3fb7, "check_for_player_just_fallen_off_edge")
 comment(0x3fbc, "next animation is falling straight down")
 expr(0x3fbd, "bird_fall_straight_down_animation - bird_base_animations")    #$c0
-expr(0x3fc2, "bird_animation13 - bird_base_animations")    #$89
-expr(0x3fc9, "bird_animation14 - bird_base_animations")    #$9a
+expr(0x3fc2, "bird_animation13 - bird_base_animations")                     #$89
+expr(0x3fc9, "bird_animation14 - bird_base_animations")                     #$9a
 label(0x3fca, "set_player_animation_step")
 expr(0x3fcf, make_lo("bird_base_animations"))
 expr(0x3fd1, make_hi("bird_base_animations"))
