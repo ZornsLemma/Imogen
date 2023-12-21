@@ -42,6 +42,7 @@ constant(3, "objectid_egg")
 
 # Room 3
 constant(4, "objectid_fire2")
+constant(5, "objectid_sparkles")
 
 
 # When the egg is off-screen, this counts up every update cycle it is not visible (capping at &80). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
@@ -243,6 +244,7 @@ label(0x3df6, "return1")
 label(0x3e96, "room_3_update_handler")
 expr(0x3e9c, "objectid_fire1")
 expr(0x3ea5, "objectid_fire2")
+expr(0x3eb4, "objectid_sparkles")
 entry(0x3eb8, "update_bird")
 expr(0x3eb9, "bird_transition_out_animation - bird_base_animations")
 expr(0x3ebe, make_lo("bird_base_animations"))

@@ -36,6 +36,7 @@ objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_small_egg                    = 2
+objectid_sparkles                     = 5
 opcode_jmp                            = 76
 small_egg_status_collected            = 255
 sprite_op_flags_copy_screen           = 1
@@ -1006,7 +1007,7 @@ room_3_update_handler
     lda #4                                                            ; 3ead: a9 04
     sta temp_sprite_x_offset                                          ; 3eaf: 85 3a
     ldy #$0e                                                          ; 3eb1: a0 0e
-    lda #5                                                            ; 3eb3: a9 05
+    lda #objectid_sparkles                                            ; 3eb3: a9 05
     jmp update_level_completion                                       ; 3eb5: 4c 10 1a
 
 update_bird
@@ -2490,6 +2491,9 @@ pydis_end
 }
 !if (objectid_small_egg) != $02 {
     !error "Assertion failed: objectid_small_egg == $02"
+}
+!if (objectid_sparkles) != $05 {
+    !error "Assertion failed: objectid_sparkles == $05"
 }
 !if (room_0_data) != $3ff2 {
     !error "Assertion failed: room_0_data == $3ff2"
