@@ -52,10 +52,11 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_small_egg_status") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something' (it is also set to 1 on entering level for first time) - it is set to &ff when the egg is collected (at 4213), it is set to c at 41c3 when the egg throw starts, it is set to &32 at 4262 when the egg collides with floor or big egg after being thrown, though shortly after it is set to 1 at 427c - ok, the 427c set to 1 happens when it lands, this occurs quicker when thrown at wall because it has less time to fall, the delay is more obvious when throwing at the big egg - note also that the egg has a little bit of horizontal rebound (at least when hitting wall after knocking the big egg over) - I think this covers more or less everything
 constant(0xff, "small_egg_status_collected") # probably only b7 set actually matters
-label(0x0a14, "save_game_level_e_big_egg_animation_index") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
-label(0x0a15, "save_game_level_e_bird_global_x_position") # X position within the bird's cross-screen flight path, not on screen - $ff means bird has been captured
+
+label(0x0a13, "save_game_level_e_small_egg_status")         # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something' (it is also set to 1 on entering level for first time) - it is set to &ff when the egg is collected (at 4213), it is set to c at 41c3 when the egg throw starts, it is set to &32 at 4262 when the egg collides with floor or big egg after being thrown, though shortly after it is set to 1 at 427c - ok, the 427c set to 1 happens when it lands, this occurs quicker when thrown at wall because it has less time to fall, the delay is more obvious when throwing at the big egg - note also that the egg has a little bit of horizontal rebound (at least when hitting wall after knocking the big egg over) - I think this covers more or less everything
+label(0x0a14, "save_game_level_e_big_egg_animation_index")  # TODO: other uses? not checked yet? egg state slightly speculative but prob right
+label(0x0a15, "save_game_level_e_bird_global_x_position")   # X position within the bird's cross-screen flight path, not on screen - $ff means bird has been captured
 
 common_to_all('E')
 define_level(4)
@@ -141,8 +142,8 @@ expr(0x3b24, "jmp_for_update_extra_player_character + 1")
 expr(0x3b27, make_hi("update_bird"))
 expr(0x3b29, "jmp_for_update_extra_player_character + 2")
 ground_fill(0x3b2b)
-expr(0x3b2c, make_lo("source_sprite_data"))
-expr(0x3b30, make_hi("source_sprite_data"))
+expr(0x3b2c, make_lo("ground_fill_2x2_top_left"))
+expr(0x3b30, make_hi("ground_fill_2x2_top_left"))
 comment(0x3b40, "This table is 0-terminated")
 label(0x3b40, "bird_wing_animation_table")
 label(0x3b45, "bird_accessory_sprite_list")
@@ -230,7 +231,7 @@ term(0x3c05)
 label(0x3c06, "bird_fall_straight_down_animation")
 bird_step(0x3c06)
 term(0x3c0a)
-entry(0x3c0b, "draw_sprite_nest_at_cell_xy_and_write_to_collision_map")
+label(0x3c0b, "draw_sprite_nest_at_cell_xy_and_write_to_collision_map")
 expr(0x3c14, sprite_dict)
 label(0x3cd3, "room_2_check_right_exit")
 expr(0x3cd6, "exit_room_right")
@@ -410,13 +411,17 @@ label(0x41ec, "restore_small_egg_sprite_and_test_for_collision_with_player")
 expr(0x41f0, "object_spriteid_old + objectid_small_egg")
 expr(0x41f3, "objectid_old_player")
 expr(0x41f5, "objectid_small_egg")
+comment(0x4207, "add small egg to toolbar")
+label(0x420c, "take_small_egg")
 expr(0x420d, sprite_dict)
 expr(0x420f, "object_spriteid + objectid_small_egg")
 expr(0x4212, "small_egg_status_collected")
+label(0x4219, "update_small_egg_sounds_and_check_if_just_used_egg")
 expr(0x4222, sprite_dict)
 expr(0x4227, sprite_dict)
 label(0x4230, "return2")
 entry(0x4231, "small_egg_animation_update")
+label(0x4240, "got_small_egg_animation_step_in_y")
 expr(0x4244, "small_egg_thrown_right_animation - small_egg_animations")
 ab(0x424f)
 entry(0x4251, "small_egg_thrown_left")
@@ -461,13 +466,17 @@ expr(0x4327, "object_x_high + objectid_small_egg")
 expr(0x432d, "object_y_low + objectid_small_egg")
 expr(0x4332, "object_y_high + objectid_small_egg")
 expr(0x4338, "object_direction + objectid_small_egg")
+label(0x433b, "update_small_egg_collision_sounds")
 expr(0x4348, "objectid_small_egg")
 expr(0x434f, "object_y_low + objectid_small_egg")
 expr(0x4352, "object_y_low_old + objectid_small_egg")
+label(0x4359, "check_for_delta_x_in_small_egg_movement")
 expr(0x435a, "object_x_low + objectid_small_egg")
 expr(0x435e, "object_x_low_old + objectid_small_egg")
 expr(0x4363, "object_x_high + objectid_small_egg")
 expr(0x4366, "object_x_high_old + objectid_small_egg")
+label(0x4370, "small_egg_moving_right")
+label(0x4373, "test_for_small_egg_collision_with_rock_and_play_sound")
 expr(0x4379, "objectid_small_egg")
 ldx_ldy_jsr_play_sound_yx(0x4385, "sound1")
 label(0x4388, "return4")
@@ -476,7 +485,7 @@ label(0x438a, "remember_object_held_sprite")
 label(0x438b, "remember_small_egg_sprite")
 label(0x443f, "room_1_check_right_exit")
 expr(0x4442, "exit_room_right")
-comment(0x444c, "Table of animations for the big egg. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3, the egg. Each animation is terminated with an extra zero byte.")
+comment(0x444c, "Table of animations for the big egg. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to the egg position. Each animation is terminated with an extra zero byte.")
 label(0x444c, "egg_animations_table")
 blank(0x444d)
 expr(0x444d, sprite_dict)
@@ -544,6 +553,7 @@ expr(0x4564, "object_x_low + objectid_egg")
 expr(0x456a, "object_y_low + objectid_egg")
 expr(0x4580, make_subtract("egg_normal_animation", "egg_animations_table"))         #1
 expr(0x4584, make_subtract("egg_tilted_animation", "egg_animations_table"))         #5
+label(0x4596, "write_egg_to_collision_map")
 label(0x45a0, "return5")
 comment(0x45a1, "Preserves Y. A is $ff on exit if small egg has hit large egg, 0 otherwise. Flags reflect A on exit.")
 entry(0x45a1, "test_if_small_egg_hit_large_egg")
@@ -552,9 +562,9 @@ expr(0x45ae, "objectid_small_egg")
 entry(0x45d2, "load_a_and_return")
 label(0x45d6, "return_a")
 label(0x45d7, "saved_y")
-label(0x460c, "source_sprite_data")
-label(0x4373, "test_for_small_egg_collision_with_rock_and_play_sound")
-label(0x4370, "small_egg_moving_right")
+blank(0x45d8)
+label(0x460c, "ground_fill_2x2_top_left")
+blank(0x460c)
 
 for i in range(0x4099, 0x40cf):
     byte(i)
@@ -584,9 +594,51 @@ for i in range(0x4099, 0x40cf):
 for i in range(0x444d, 0x4469):
     byte(i)
 
-
 for i in range(0x3b40, 0x3b44):
     expr(i, sprite_dict)
+
+
+print("""; *************************************************************************************
+;
+; Level E: 'DUCK-EGG-BLUES'
+;
+; Save game variables:
+;
+;     save_game_level_e_small_egg_status                         ($0a13):
+;               0: uninitialised
+;               1: stationary
+;              $c: thrown right
+;             $25: thrown left
+;             $32: falling
+;             $ff: taken
+;
+;     save_game_level_e_big_egg_animation_index                  ($0a14):
+;               0: uninitialised
+;               1: normal position
+;               5: tilted position
+;               9: falling off ledge
+;             $16: falling straight down
+;             $1a: landed
+;
+;     save_game_level_e_bird_global_x_position                   ($0a15):
+;             X position within the bird's cross-screen flight path
+;             $ff: taken
+;
+; Solution:
+;
+;   1. Move to the room o the right and climb the rope to collect the small egg
+;   2. Return to the starting room and climb the rope exiting on the right to stand on nest.
+;   3. As the wizard, use the small egg to tilt the big egg.
+;   4. Collect the small egg and throw from the same position. (The big egg falls)
+;   5. Jump onto the big egg as the cat and jump onto the left ledge to exit the room left.
+;   6. Climb the rope looking right to the top then jump off to the right, timing it to
+;      collide with the bird.
+;   7. Change into the bird and fly up to the top room to collect the spell.
+;
+; *************************************************************************************
+""")
+
+
 
 result = go(False)
 result = remove_sprite_data(result)

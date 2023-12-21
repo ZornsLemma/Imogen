@@ -1,3 +1,42 @@
+; *************************************************************************************
+;
+; Level E: 'DUCK-EGG-BLUES'
+;
+; Save game variables:
+;
+;     save_game_level_e_small_egg_status                         ($0a13):
+;               0: uninitialised
+;               1: stationary
+;              $c: thrown right
+;             $25: thrown left
+;             $32: falling
+;             $ff: taken
+;
+;     save_game_level_e_big_egg_animation_index                  ($0a14):
+;               0: uninitialised
+;               1: normal position
+;               5: tilted position
+;               9: falling off ledge
+;             $16: falling straight down
+;             $1a: landed
+;
+;     save_game_level_e_bird_global_x_position                   ($0a15):
+;             X position within the bird's cross-screen flight path
+;             $ff: taken
+;
+; Solution:
+;
+;   1. Move to the room o the right and climb the rope to collect the small egg
+;   2. Return to the starting room and climb the rope exiting on the right to stand on nest.
+;   3. As the wizard, use the small egg to tilt the big egg.
+;   4. Collect the small egg and throw from the same position. (The big egg falls)
+;   5. Jump onto the big egg as the cat and jump onto the left ledge to exit the room left.
+;   6. Climb the rope looking right to the top then jump off to the right, timing it to
+;      collide with the bird.
+;   7. Change into the bird and fly up to the top room to collect the spell.
+;
+; *************************************************************************************
+
 ; Constants
 bird_max_global_x_position            = 116
 bird_min_global_x_position            = 30
@@ -1550,20 +1589,21 @@ restore_small_egg_sprite_and_test_for_collision_with_player
     ldx remember_object_held_sprite                                   ; 41f9: ae 8a 43
     stx player_held_object_spriteid                                   ; 41fc: 86 52
     ora #0                                                            ; 41fe: 09 00
-    beq c4219                                                         ; 4200: f0 17
+    beq update_small_egg_sounds_and_check_if_just_used_egg            ; 4200: f0 17
     lda player_just_used_small_egg_flag                               ; 4202: ad 89 43
-    bne c420c                                                         ; 4205: d0 05
+    bne take_small_egg                                                ; 4205: d0 05
+; add small egg to toolbar
     lda #spriteid_egg_toolbar                                         ; 4207: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 4209: 20 bd 2b
-c420c
+take_small_egg
     lda #spriteid_one_pixel_masked_out                                ; 420c: a9 00
     sta object_spriteid + objectid_small_egg                          ; 420e: 8d aa 09
     lda #small_egg_status_collected                                   ; 4211: a9 ff
     sta save_game_level_e_small_egg_status                            ; 4213: 8d 13 0a
     jmp return2                                                       ; 4216: 4c 30 42
 
-c4219
-    jsr sub_c433b                                                     ; 4219: 20 3b 43
+update_small_egg_sounds_and_check_if_just_used_egg
+    jsr update_small_egg_collision_sounds                             ; 4219: 20 3b 43
     lda player_just_used_small_egg_flag                               ; 421c: ad 89 43
     beq return2                                                       ; 421f: f0 0f
     lda #spriteid_egg_toolbar                                         ; 4221: a9 d3
@@ -1581,9 +1621,9 @@ small_egg_animation_update
     adc #3                                                            ; 4235: 69 03
     tay                                                               ; 4237: a8
     lda small_egg_animations,y                                        ; 4238: b9 99 40
-    bne c4240                                                         ; 423b: d0 03
+    bne got_small_egg_animation_step_in_y                             ; 423b: d0 03
     ldy save_game_level_e_small_egg_status                            ; 423d: ac 13 0a
-c4240
+got_small_egg_animation_step_in_y
     lda save_game_level_e_small_egg_status                            ; 4240: ad 13 0a
     cmp #small_egg_thrown_right_animation - small_egg_animations      ; 4243: c9 0c
     bne small_egg_not_being_thrown                                    ; 4245: d0 23
@@ -1710,7 +1750,7 @@ update_object_properties_for_small_egg
     sta object_direction + objectid_small_egg                         ; 4337: 8d c0 09
     rts                                                               ; 433a: 60
 
-sub_c433b
+update_small_egg_collision_sounds
     lda desired_room_index                                            ; 433b: a5 30
     cmp room_containing_small_egg                                     ; 433d: cd 75 0a
     bne return4                                                       ; 4340: d0 46
@@ -1718,12 +1758,12 @@ sub_c433b
     sta temp_bottom_offset                                            ; 4344: 8d 51 25
     lda #objectid_small_egg                                           ; 4347: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4349: 20 94 28
-    beq c4359                                                         ; 434c: f0 0b
+    beq check_for_delta_x_in_small_egg_movement                       ; 434c: f0 0b
     lda object_y_low + objectid_small_egg                             ; 434e: ad 7e 09
     cmp object_y_low_old + objectid_small_egg                         ; 4351: cd 89 09
-    beq c4359                                                         ; 4354: f0 03
+    beq check_for_delta_x_in_small_egg_movement                       ; 4354: f0 03
     jsr play_landing_sound                                            ; 4356: 20 a9 23
-c4359
+check_for_delta_x_in_small_egg_movement
     lda object_x_low + objectid_small_egg                             ; 4359: ad 52 09
     sec                                                               ; 435c: 38
     sbc object_x_low_old + objectid_small_egg                         ; 435d: ed 5d 09
@@ -1895,8 +1935,7 @@ room_1_check_right_exit
 
 ; Table of animations for the big egg. There are three bytes per entry. First byte is a
 ; sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets,
-; added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss
-; of object 3, the egg. Each animation is terminated with an extra zero byte.
+; added to the egg position. Each animation is terminated with an extra zero byte.
 egg_animations_table
     !byte 0                                                           ; 444c: 00
 
@@ -2082,9 +2121,9 @@ finish_setting_up_egg
     sta height_in_cells                                               ; 457a: 85 3d
     lda save_game_level_e_big_egg_animation_index                     ; 457c: ad 14 0a
     cmp #egg_normal_animation - egg_animations_table                  ; 457f: c9 01
-    beq c4596                                                         ; 4581: f0 13
+    beq write_egg_to_collision_map                                    ; 4581: f0 13
     cmp #egg_tilted_animation - egg_animations_table                  ; 4583: c9 05
-    beq c4596                                                         ; 4585: f0 0f
+    beq write_egg_to_collision_map                                    ; 4585: f0 0f
     ldx #$0b                                                          ; 4587: a2 0b
     ldy #$15                                                          ; 4589: a0 15
     inc width_in_cells                                                ; 458b: e6 3c
@@ -2092,7 +2131,7 @@ finish_setting_up_egg
     lda room_1_egg_y                                                  ; 458f: ad 78 0a
     cmp #$a8                                                          ; 4592: c9 a8
     bcc return5                                                       ; 4594: 90 0a
-c4596
+write_egg_to_collision_map
     jsr read_collision_map_value_for_xy                               ; 4596: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4599: c5 3e
     beq return5                                                       ; 459b: f0 03
@@ -2132,6 +2171,7 @@ return_a
     !byte 0                                                           ; 45d6: 00
 saved_y
     !byte 0                                                           ; 45d7: 00
+
 envelope1
     !byte 5                                                           ; 45d8: 05                      ; envelope number
     !byte 1                                                           ; 45d9: 01                      ; step length (100ths of a second)
@@ -2177,8 +2217,8 @@ sound2
     !word 0                                                           ; 4606: 00 00                   ; amplitude
     !word 210                                                         ; 4608: d2 00                   ; pitch
     !word 1                                                           ; 460a: 01 00                   ; duration
+
 ground_fill_2x2_top_left
-source_sprite_data
     !byte %..#.....                                                   ; 460c: 20
     !byte %...#....                                                   ; 460d: 10
     !byte %#..#....                                                   ; 460e: 90
@@ -2216,14 +2256,6 @@ ground_fill_2x2_bottom_right
     !byte %.....#..                                                   ; 462b: 04
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c420c
-;     c4219
-;     c4240
-;     c4359
-;     c4596
-;     sub_c433b
 !if (<bird_accessory_sprite_list) != $45 {
     !error "Assertion failed: <bird_accessory_sprite_list == $45"
 }
