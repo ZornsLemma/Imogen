@@ -587,16 +587,39 @@ expr(0x0c2c, make_hi("irq1_routine"))
 with main_code_area:
     comment(0x1103, """developer_flags
 
-    The 'developer flags byte' lives in the ICODATA file. When loaded, if bit 6 is set then the variable 'developer_flags' is set to this value.
+The 'developer flags byte' lives in the ICODATA file. When loaded, if bit 6 is set then the variable 'developer_flags' is set to this value (after clearing bit 6).
 
-    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up. If the menu pointer is on one of the first four standard items (when the game is normally paused), SHIFT steps the animation forward.
-    bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
-    bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular load. (An option for copy protection?)
-    bit 3: load game data from drive 2, not drive 0
-    bit 4: unused
-    bit 5: unused
-    bit 6: load into developer_flags variable
-    bit 7: "developer mode active", toolbar is magenta""")
+bit 0: (set in 'TEST-MODE' and 'DEBUG-MODE')
+  Enables:
+  * 'GIMME' to set all levels complete and adds the completion spell to the toolbar
+    ready to complete the game.
+  * If the menu pointer is on one of the first four items, then SHIFT advances the
+    game one tick (for debugging animations?)
+  * ESCAPE returns to BASIC, but this only works if the appropriate bit is set in
+    ICODATA at startup and bank 12 has sideways RAM active and banked in at startup.
+  * Can enter one letter to skip to that level
+  * Can enter zero characters to restart the game
+  * On the EPILOGUE, holding the up arrow speeds up the scrolling of the text.
+    (noticeable when not much text is on-screen)
+
+bit 1: (set in 'REVIEW-MODE' and 'TEST-MODE' and 'DEBUG-MODE')
+  Enables two more cheat codes:
+  * 'DUMP' to screen dump to an EPSON printer
+  * 'EPILOGUE' to show the game's ending
+
+bit 2: load ICODATA directly from track 39 on the disc, rather than a regular file.
+  (An option for copy protection presumably)
+bit 3: load game data from drive 2, not drive 0
+bit 4: unused
+bit 5: unused
+bit 6: load value from in ICODATA into developer_flags variable
+bit 7: (set in 'DEBUG-MODE')
+  Enables:
+  * The toolbar changes to a magenta background
+  * Entering a level automatically collects all objects needed to complete it
+  * In dataN ('PAVLOV-WAS-HERE'), pressing 'O' starts the dog salivating
+  * In dataK ('DRIPPING-STUFF'), pressing 'G' grows the plant, 'P' poisons once grown""")
+
     label(0x1104, "timingA_counter_low")
     label(0x1105, "timingA_counter_high")
     label(0x1106, "timingB_counter_low")
@@ -1056,7 +1079,7 @@ On Entry:
     label(0x1825, "change_palette_logical_colour_x_to_y")
     label(0x1830, "change_palette_loop")
     entry(0x1839, "reset_game_because_escape_pressed")
-    comment(0x1845, "If there is sideways RAM mapped into ROM slot 13, this copies data that had been previously saved to sideways RAM: 256 bytes from $be00 to $0c00, and 256 bytes from $bf00 to $0b00. This is code to help reset the game during development.")
+    comment(0x1845, "If there is sideways RAM mapped into ROM slot 12, this copies data that had been previously saved to sideways RAM: 256 bytes from $be00 to $0c00, and 256 bytes from $bf00 to $0b00. This is code to help reset the game during development.")
     label(0x1845, "reset_code")
     comment(0x1848, "select ROM in slot 13", inline=True)
     label(0x184d, "copy_from_rom_c_loop")
@@ -3418,8 +3441,8 @@ print("""; *********************************************************************
 ;                     ready to complete the game.
 ;           * If the menu pointer is on one of the first four items, then SHIFT advances the
 ;             game one tick (for debugging animations?)
-;           * ESCAPE resets the game, but only works if the appropriate bit is set in ICODATA
-;             at startup and bank 13 has sideways RAM.
+;           * ESCAPE returns to BASIC, but this only works if the appropriate bit is set in ICODATA
+;             at startup and bank 12 has sideways RAM active and banked in at startup.
 ;           * Can enter one letter to skip to that level
 ;           * Can enter zero characters to restart the game
 ;           * On the EPILOGUE, holding the up arrow speeds up the scrolling of the text.
