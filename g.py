@@ -3393,38 +3393,48 @@ print("""; *********************************************************************
 
 ; *************************************************************************************
 ;
-; Memory Map
-; ----------
+; Notes:
+; ------
+; The game has a core engine (file 'g') that deals with drawing sprites, running the toolbar,
+; updating objects (including the player animations/state), object collision, loading levels,
+; moving between rooms, the collision map, etc.
 ;
-; After the memory gets relocated at initialisation:
+; Each level is loaded as a separate file from disk (or cassette) as needed, and unusually is mostly
+; code with some sprite data tacked on the end. The level code takes over control from the engine
+; while it is running. (See 'initialise_level_and_room' for the flow control details).
 ;
-;   0100-012e: object data (object extents etc)
-;   0131-0160: code to print transformations left
-;   0400-0527: dialog box code
-;   0530-07ff: cache of screen memory under the dialog box
-;   0950-0ab5: data
-;   0ab7-0aff: level utils code
-;   0b11-0bec: special 'erase' sprite data (sprites 197, 198, 199: the contents of screen behind sprites)
-;   0c00-0c60: collision map
-;   1103-3ad4: main code
-;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code before being overwritten by a level)
-;   4ad8-5bbf: SPRDATA file (main sprites) OR
-;   53c0-578a: AUXCODE file (for password / cheat codes support)
-;   5bc0-61ff: screen memory: toolbar
-;   6200-7fff: screen memory: main game area
+; Because there are 16 levels, each with about 4K of code plus data, Imogen is a big game with a
+; total of around 58K of code plus 26K of compressed sprites.
 ;
-; Only during initialisation:
+; The levels are stored in files dataA to dataP, and an epilogue (dataQ) played when the game is
+; completed. Each level holds 4 rooms, although this is not a restriction imposed by the engine.
+; More or fewer rooms would equally be possible so long as they fit in memory.
 ;
-;   3c06-4225: initialisation code (which will get overwritten after initialisation by level data)
-;   40ff-4318: ICODATA file (contains toolbar sprites only used once to render the toolbar)
+; Sprite drawing:
 ;
-; The AUXCODE Overlay
-; -------------------
-; When the user submits a password, the sprite memory is temporarily overwritten by the AUXCODE
-; file which contains code to handle password and cheat code recognition (including a screendump
-; facility for Epsom printers). Once finished, the SPRDATA is reloaded back into memory so the
-; game can continue. Both sets of code/data don't need to reside in memory at the same time,
-; so this is a memory saving system known as an overlay.
+; The sprite drawing is particularly feature rich and therefore complex. It can draw sprites with
+; any pixel width and any height (1-255 pixels) at any pixel position on screen, which is clipped
+; properly to the edges of the screen. It draws optionally with a mask. Sprites can also be
+; drawn left-right reflected. They can have an offset whenever drawn, to aid with animations.
+;
+; Sprite data is stored in a compressed format, and drawn directly from the compressed data (not
+; decompressed). See 'sprite_op' for details of the compression etc.
+;
+; While plotting the sprite, the code can also optionally remember the previous contents of the
+; screen behind the masked sprite that's being drawn, into a masked compressed sprite area in
+; memory. This is so the screen background can be restored later by drawing that sprite.
+;
+; Objects:
+;
+; There is support in the core game code for objects. Objects have a current sprite, a position,
+; optionally a sprite area for erasing itself, a left-right direction, and a z-order. The game code
+; can deal with redrawing multiple overlapping sprites by erasing the sprites on top of a moving
+; sprite and redrawing just the sprites that need to be redrawn.
+;
+; Objects do not store animation data, nor have any physics associated. The individual levels are
+; responsible for any animations required. The state machine for an object is usually based around
+; the animations the object requires. There is no physics in the game. Gravity for example is
+; simulated via animations.
 ;
 ; Cheat codes
 ; -----------
@@ -3464,48 +3474,36 @@ print("""; *********************************************************************
 ; 'QUIT':
 ;           * Restarts the game
 ;
-; Notes:
-; ------
-; The game has a core engine (file 'g') that deals with drawing sprites, running the toolbar,
-; updating objects (including the player animations/state), object collision, loading levels,
-; moving between rooms, the collision map, etc.
+; Memory Map (after the memory gets relocated at initialisation):
+; ---------------------------------------------------------------
 ;
-; Each level is loaded as a separate file from disk (or cassette), and unusually is mainly code
-; with sprite data tacked on the end. The level code takes over control from the engine while it is
-; running. See 'initialise_level_and_room' for the flow control details.
+;   0100-012e: object data (object extents etc)
+;   0131-0160: code to print transformations left
+;   0400-0527: dialog box code
+;   0530-07ff: cache of screen memory under the dialog box
+;   0950-0ab5: data
+;   0ab7-0aff: level utils code
+;   0b11-0bec: special 'erase' sprite data (sprites 197, 198, 199: the contents of screen behind sprites)
+;   0c00-0c60: collision map
+;   1103-3ad4: main code
+;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code before being overwritten by a level)
+;   4ad8-5bbf: SPRDATA file (main sprites) OR
+;   53c0-578a: AUXCODE file (for password / cheat codes support)
+;   5bc0-61ff: screen memory: toolbar
+;   6200-7fff: screen memory: main game area
 ;
-; Because there are 16 levels, each with about 4K of code plus data, Imogen is a big game with
-; around 58K of code plus 26K of compressed sprites.
+; Only during initialisation:
 ;
-; The levels are stored in files dataA to dataP, and an epilogue (dataQ) played when the game is
-; completed. Each level holds 4 rooms, although this is not a restriction imposed by the engine.
-; More or fewer rooms would equally be possible so long as they fit in memory.
+;   3c06-4225: initialisation code (which will get overwritten after initialisation by level data)
+;   40ff-4318: ICODATA file (contains toolbar sprites only used once to render the toolbar)
 ;
-; Sprite drawing:
-;
-; The sprite drawing is particularly feature rich and therefore complex. It can draw sprites with
-; any pixel width and any height (1-255 pixels) at any pixel position on screen, which is clipped
-; properly to the edges of the screen. It draws optionally with a mask. Sprites can also be
-; drawn left-right reflected. They can have an offset whenever drawn, to aid with animations.
-;
-; Sprite data is stored in a compressed format, and drawn directly from the compressed data (not
-; decompressed). See 'sprite_op' for details of the compression etc.
-;
-; While plotting the sprite, the code can also optionally remember the previous contents of the
-; screen behind the masked sprite that's being drawn, into a masked compressed sprite area in
-; memory. This is so the screen background can be restored later by drawing that sprite.
-;
-; Objects:
-;
-; There is support in the core game code for objects. Objects have a current sprite, a position,
-; optionally a sprite area for erasing itself, a left-right direction, and a z-order. The game code
-; can deal with redrawing multiple overlapping sprites by erasing the sprites on top of a moving
-; sprite and redrawing just the sprites that need to be redrawn.
-;
-; Objects do not store animation data, nor have any physics associated. The individual levels are
-; responsible for any animations required. The state machine for an object is usually based around
-; the animations the object requires. There is no physics in the game. Gravity for example is
-; simulated via animations.
+; The AUXCODE Overlay
+; -------------------
+; When the user submits a password, the sprite memory is temporarily overwritten by the AUXCODE
+; file which contains code to handle password and cheat code recognition (including a screendump
+; facility for Epsom printers). Once finished, the SPRDATA is reloaded back into memory so the
+; game can continue. Both sets of code/data don't need to reside in memory at the same time,
+; so this is a memory saving system known as an overlay.
 ;
 ; *************************************************************************************
 """)
